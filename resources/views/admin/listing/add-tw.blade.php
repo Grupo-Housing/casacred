@@ -535,6 +535,12 @@
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             </div>
 
+                            <div class="mb-2">
+                                <label class="text-sm font-medium text-gray-700">Precio de Renta</label>
+                                <input type="number" step="0.01" id="unit_rent_price" placeholder="0.00"
+                                    class="w-full border-b bg-transparent focus:outline-none">
+                            </div>
+
                         </div>
 
                         <div class="grid grid-cols-1">
@@ -1595,6 +1601,7 @@ document.addEventListener('DOMContentLoaded', function(){
             bathrooms: document.getElementById('unit_bathrooms').value,
             price: document.getElementById('unit_price').value,
             min_price: document.getElementById('unit_min_price').value,
+            rent_price: document.getElementById('unit_rent_price').value,
             description: document.getElementById('unit_description').value,
         };
 
@@ -1627,6 +1634,7 @@ document.addEventListener('DOMContentLoaded', function(){
             document.getElementById('unit_bathrooms').value = "";
             document.getElementById('unit_price').value = "";
             document.getElementById('unit_min_price').value = "";
+            document.getElementById('unit_rent_price').value = "";
             document.getElementById('unit_description').value = "";
         })
         .catch(error => {

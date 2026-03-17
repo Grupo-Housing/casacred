@@ -88,6 +88,13 @@
                                         class="w-full border-b bg-transparent focus:outline-none"
                                         disabled>
                                 </div>
+
+                                <div class="mb-2">
+                                    <label class="text-sm font-medium text-gray-700">Precio de Renta</label>
+                                    <input type="number" step="0.01" name="rent_price" value="{{ $unit->rent_price }}"
+                                        class="w-full border-b bg-transparent focus:outline-none"
+                                        disabled>
+                                </div>
                             
                                 <!-- STATUS -->
                                 <div class="mb-2">

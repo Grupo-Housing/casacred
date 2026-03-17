@@ -21,6 +21,7 @@ class Unit extends Model
         'bathrooms',
         'price',
         'min_price',
+        'rent_price',
         'status',
         'description',
     ];

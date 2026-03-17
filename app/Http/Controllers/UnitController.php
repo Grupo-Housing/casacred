@@ -10,8 +10,9 @@ use Illuminate\Support\Facades\Validator;
 
 class UnitController extends Controller
 {
-    public function store(Request $request){
-        
+    public function store(Request $request)
+    {
+
         $validator = Validator::make($request->all(), [
             'listing_id' => 'required',
             'name' => 'required|string|max:255',
@@ -23,9 +24,10 @@ class UnitController extends Controller
             'bathrooms' => 'nullable|numeric',
             'price' => 'nullable|numeric',
             'min_price' => 'nullable|numeric',
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'rent_price' => 'nullable|numeric',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
@@ -33,9 +35,9 @@ class UnitController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-    
+
         $validated = $validator->validated();
-    
+
         $unit = new Unit();
 
         $listing = Listing::where('product_code', $validated['listing_id'])->first();
@@ -52,8 +54,9 @@ class UnitController extends Controller
         $unit->min_price = $validated['min_price'] ?? null;
         $unit->description = $validated['description'] ?? null;
         $unit->status = UnitStatus::AVAILABLE;
+        $unit->rent_price = $validated['rent_price'] ?? null;
         $unit->save();
-    
+
         return response()->json([
             'success' => true,
             'message' => 'Unidad creada correctamente',
@@ -74,6 +77,7 @@ class UnitController extends Controller
             'min_price' => 'nullable|numeric',
             'status' => 'nullable',
             'description' => 'nullable|string',
+            'rent_price' => 'nullable|numeric',
         ]);
 
         $unit->update($validated);
