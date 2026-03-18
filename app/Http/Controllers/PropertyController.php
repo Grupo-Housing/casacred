@@ -112,14 +112,6 @@ class PropertyController extends Controller
             }
         }
 
-        $featuredProperty = Listing::where('id', 2096)->first();
-
-        $images = array_filter(explode('|', $featuredProperty->images));
-        $filexists = false;
-        if (file_exists(public_path() . '/uploads/listing/thumb/600/' . strtok($featuredProperty->images, '|'))) {
-            $filexists = true;
-        }
-
         return view('propertieslist', compact(
             'type',
             'typeId',
@@ -130,7 +122,7 @@ class PropertyController extends Controller
             'minPrice',
             'maxPrice',
             'provinces',
-            'featuredProperty'
+            //'featuredProperty'
         ));
     }
 
