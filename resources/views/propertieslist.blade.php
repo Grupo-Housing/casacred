@@ -1342,7 +1342,7 @@
                         </h5>
                         <p class="text-muted mb-0" style="font-size: 13px;">Haz clic en una zona del mapa o en la leyenda para filtrar propiedades</p>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
                 </div>
                 <div class="modal-body pt-2">
                     <!-- Leyenda clickeable -->
