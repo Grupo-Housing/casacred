@@ -148,6 +148,8 @@ class PropertyController extends Controller
         $listyearsmin = $request->filled('listyears_min') ? (int) $request->input('listyears_min') : null;
         $listyearsmax = $request->filled('listyears_max') ? (int) $request->input('listyears_max') : null;
         $page = $request->input('page', 1);
+
+        $cardinalZone = $request->input('cardinal_zone');
         $perPage = $request->input('per_page', 20);
 
         // 🔥 Verificar si searchTerm contiene un código de propiedad (buscar directamente por product_code)
@@ -177,7 +179,8 @@ class PropertyController extends Controller
                     'listings.available',
                     'listings.status',
                     'listing_types.type_title as type_name',
-                    'listings.aliquot'
+                    'listings.aliquot',
+                    'listings.cardinal_zone'
                 )
                 ->where('listings.available', 1)
                 ->where('listings.status', 1)
@@ -230,7 +233,8 @@ class PropertyController extends Controller
                 'listings.available',
                 'listings.status',
                 'listing_types.type_title as type_name',
-                'listings.aliquot'
+                'listings.aliquot',
+                'listings.cardinal_zone'
             )
             ->where('listings.available', 1)
             ->where('listings.status', 1)
@@ -295,6 +299,10 @@ class PropertyController extends Controller
         if ($sector) {
             $properties_filter->where('sector', 'LIKE', "%{$sector}%");
             $properties_filter->where('address', 'LIKE', "%{$sector}%");
+        }
+
+        if (!empty($cardinalZone)) {
+            $properties_filter->where(DB::raw('LOWER(listings.cardinal_zone)'), 'LIKE', '%' . strtolower($cardinalZone) . '%');
         }
 
         //filtrar por caracteristicas
