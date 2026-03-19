@@ -208,7 +208,7 @@
 
                                 <div class="w-auto bg-gray-100 pt-4 pb-8 pl-1 text-justify">
                                     <label class="text-xs text-gray-400">Zona Cardinal</label>
-                                    <select class="block w-28 pl-2 border-gray-300 hover:border-gray-400 shadow-md focus:outline-none" 
+                                    <select class="block w-28 pl-2 border-gray-300 hover:border-gray-400 shadow-md focus:outline-none"
                                             id="b_cardinal_zone" name="b_cardinal_zone">
                                         <option value="">Todas</option>
                                         <option value="norte">↑ Norte</option>
@@ -216,6 +216,10 @@
                                         <option value="este">→ Este</option>
                                         <option value="oeste">← Oeste</option>
                                         <option value="centro">⊙ Centro</option>
+                                        <option value="noreste">↗ Noreste</option>
+                                        <option value="noroeste">↖ Noroeste</option>
+                                        <option value="sureste">↘ Sureste</option>
+                                        <option value="suroeste">↙ Suroeste</option>
                                     </select>
                                 </div>
 
@@ -492,62 +496,86 @@
 
     {{-- MODAL MAPA CARDINAL --}}
     <div id="modal-cardinal-map"
-        class="fixed inset-0 z-50 flex items-center justify-center"
-        style="display: none !important; background: rgba(0,0,0,0.65)">
-
+     class="fixed inset-0 z-50 flex items-center justify-center"
+     style="display: none !important; background: rgba(0,0,0,0.65)">
+ 
         <div class="bg-white rounded-lg shadow-2xl mx-2 overflow-hidden flex flex-col"
-            style="width: 96vw; max-width: 1100px; height: 90vh;">
-
+            style="width: 96vw; max-width: 1200px; height: 92vh;">
+    
             {{-- HEADER --}}
             <div class="flex items-center justify-between px-5 py-3 bg-gray-800 flex-shrink-0">
-                <h3 class="text-white font-semibold text-base">Mapa por Zonas Cardinales</h3>
-                <button onclick="closeCardinalMap()"
-                        class="text-gray-300 hover:text-white text-2xl leading-none ml-4">&times;</button>
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h3 class="text-white font-semibold text-base">Mapa de Propiedades por Zona Cardinal — Cuenca</h3>
+                </div>
+                <button onclick="closeCardinalMap()" class="text-gray-300 hover:text-white text-2xl leading-none">&times;</button>
             </div>
-
-            {{-- FILTROS INTERNOS DEL MAPA --}}
+    
+            {{-- FILTROS DEL MAPA --}}
             <div class="flex flex-wrap items-end gap-3 px-5 py-3 bg-gray-50 border-b flex-shrink-0">
-
-                {{-- Zona cardinal --}}
+    
+                {{-- Zonas (9 botones) --}}
                 <div>
-                    <label class="block text-xs text-gray-500 mb-1">Zona Cardinal</label>
+                    <label class="block text-xs text-gray-500 mb-1 font-semibold">Zona Cardinal</label>
                     <div class="flex gap-1 flex-wrap">
                         <button onclick="applyMapFilter('cardinal_zone', '')"
                                 id="mapbtn-all"
-                                class="map-zone-btn active-zone-btn text-xs px-3 py-1 rounded font-semibold bg-gray-700 text-white">
+                                class="map-zone-btn active-zone-btn text-xs px-2.5 py-1 rounded font-semibold bg-gray-700 text-white">
                             Todas
                         </button>
                         <button onclick="applyMapFilter('cardinal_zone', 'norte')"
                                 id="mapbtn-norte"
-                                class="map-zone-btn text-xs px-3 py-1 rounded font-semibold bg-blue-100 text-blue-700 hover:bg-blue-500 hover:text-white">
+                                class="map-zone-btn text-xs px-2.5 py-1 rounded font-semibold bg-blue-100 text-blue-700 hover:bg-blue-500 hover:text-white">
                             ↑ Norte
                         </button>
-                        <button onclick="applyMapFilter('cardinal_zone', 'sur')"
-                                id="mapbtn-sur"
-                                class="map-zone-btn text-xs px-3 py-1 rounded font-semibold bg-yellow-100 text-yellow-700 hover:bg-yellow-500 hover:text-white">
-                            ↓ Sur
+                        <button onclick="applyMapFilter('cardinal_zone', 'noreste')"
+                                id="mapbtn-noreste"
+                                class="map-zone-btn text-xs px-2.5 py-1 rounded font-semibold bg-sky-100 text-sky-700 hover:bg-sky-500 hover:text-white">
+                            ↗ Noreste
                         </button>
                         <button onclick="applyMapFilter('cardinal_zone', 'este')"
                                 id="mapbtn-este"
-                                class="map-zone-btn text-xs px-3 py-1 rounded font-semibold bg-green-100 text-green-700 hover:bg-green-500 hover:text-white">
+                                class="map-zone-btn text-xs px-2.5 py-1 rounded font-semibold bg-green-100 text-green-700 hover:bg-green-500 hover:text-white">
                             → Este
+                        </button>
+                        <button onclick="applyMapFilter('cardinal_zone', 'sureste')"
+                                id="mapbtn-sureste"
+                                class="map-zone-btn text-xs px-2.5 py-1 rounded font-semibold bg-lime-100 text-lime-700 hover:bg-lime-500 hover:text-white">
+                            ↘ Sureste
+                        </button>
+                        <button onclick="applyMapFilter('cardinal_zone', 'sur')"
+                                id="mapbtn-sur"
+                                class="map-zone-btn text-xs px-2.5 py-1 rounded font-semibold bg-yellow-100 text-yellow-700 hover:bg-yellow-500 hover:text-white">
+                            ↓ Sur
+                        </button>
+                        <button onclick="applyMapFilter('cardinal_zone', 'suroeste')"
+                                id="mapbtn-suroeste"
+                                class="map-zone-btn text-xs px-2.5 py-1 rounded font-semibold bg-orange-100 text-orange-700 hover:bg-orange-500 hover:text-white">
+                            ↙ Suroeste
                         </button>
                         <button onclick="applyMapFilter('cardinal_zone', 'oeste')"
                                 id="mapbtn-oeste"
-                                class="map-zone-btn text-xs px-3 py-1 rounded font-semibold bg-purple-100 text-purple-700 hover:bg-purple-500 hover:text-white">
+                                class="map-zone-btn text-xs px-2.5 py-1 rounded font-semibold bg-purple-100 text-purple-700 hover:bg-purple-500 hover:text-white">
                             ← Oeste
+                        </button>
+                        <button onclick="applyMapFilter('cardinal_zone', 'noroeste')"
+                                id="mapbtn-noroeste"
+                                class="map-zone-btn text-xs px-2.5 py-1 rounded font-semibold bg-indigo-100 text-indigo-700 hover:bg-indigo-500 hover:text-white">
+                            ↖ Noroeste
                         </button>
                         <button onclick="applyMapFilter('cardinal_zone', 'centro')"
                                 id="mapbtn-centro"
-                                class="map-zone-btn text-xs px-3 py-1 rounded font-semibold bg-gray-100 text-gray-600 hover:bg-gray-400 hover:text-white">
+                                class="map-zone-btn text-xs px-2.5 py-1 rounded font-semibold bg-gray-100 text-gray-600 hover:bg-gray-400 hover:text-white">
                             ⊙ Centro
                         </button>
                     </div>
                 </div>
-
+    
                 {{-- Tipo de propiedad --}}
                 <div>
-                    <label class="block text-xs text-gray-500 mb-1">Tipo de propiedad</label>
+                    <label class="block text-xs text-gray-500 mb-1 font-semibold">Tipo</label>
                     <select id="map-filter-categoria"
                             onchange="applyMapFilter('categoria', this.value)"
                             class="text-xs border border-gray-300 rounded px-2 py-1.5 focus:outline-none">
@@ -562,21 +590,17 @@
                         <option value="30">Haciendas</option>
                         <option value="35">Oficinas</option>
                         <option value="37">Edificios</option>
-                        <option value="38">Colonial</option>
-                        <option value="39">Hotel</option>
-                        <option value="41">Fábrica</option>
                         <option value="42">Parqueadero</option>
                         <option value="43">Bodega</option>
                         <option value="44">Naves Industriales</option>
-                        <option value="45">Hostal</option>
                         <option value="46">Penthouse</option>
                         <option value="41">En Proyecto</option>
                     </select>
                 </div>
-
-                {{-- Venta / Renta --}}
+    
+                {{-- Operación --}}
                 <div>
-                    <label class="block text-xs text-gray-500 mb-1">Operación</label>
+                    <label class="block text-xs text-gray-500 mb-1 font-semibold">Operación</label>
                     <select id="map-filter-transaccion"
                             onchange="applyMapFilter('transaccion', this.value)"
                             class="text-xs border border-gray-300 rounded px-2 py-1.5 focus:outline-none">
@@ -585,33 +609,35 @@
                         <option value="alquilar">Renta</option>
                     </select>
                 </div>
-
+    
                 {{-- Contador --}}
                 <div class="ml-auto text-right">
                     <p id="map-counter" class="text-sm font-semibold text-gray-700">Cargando...</p>
-                    <p id="map-filter-active" class="text-xs text-blue-600 hidden">Filtro activo</p>
+                    <p id="map-filter-active" class="text-xs text-blue-600 hidden"></p>
                 </div>
             </div>
-
+    
             {{-- LEYENDA --}}
-            <div class="flex gap-4 px-5 py-1.5 bg-white border-b text-xs flex-shrink-0 flex-wrap">
-                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span> Norte</span>
-                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span> Sur</span>
-                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span> Este</span>
-                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span> Oeste</span>
-                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-gray-400 inline-block"></span> Centro</span>
-                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-gray-200 border inline-block"></span> Sin zona</span>
-                <span class="ml-auto text-gray-400 text-xs">Haz clic en los botones de zona o en los cuadrantes del mapa para filtrar</span>
+            <div class="flex gap-3 px-5 py-1.5 bg-white border-b text-xs flex-shrink-0 flex-wrap items-center">
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Norte</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-sky-500 inline-block"></span> Noreste</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span> Este</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-lime-500 inline-block"></span> Sureste</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-yellow-500 inline-block"></span> Sur</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block"></span> Suroeste</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block"></span> Oeste</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-indigo-500 inline-block"></span> Noroeste</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-gray-400 inline-block"></span> Centro</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-gray-200 border inline-block"></span> Sin zona</span>
+                <span class="ml-auto text-gray-400">Clic en cuadrante o botón para filtrar</span>
             </div>
-
+    
             {{-- MAPA --}}
             <div id="cardinal-map" class="flex-1" style="min-height: 0;"></div>
-
+    
             {{-- FOOTER --}}
             <div class="px-5 py-2.5 bg-gray-50 border-t flex justify-between items-center flex-shrink-0">
-                <p class="text-xs text-gray-500">
-                    Los filtros aplicados aquí también se reflejan en el listado de propiedades
-                </p>
+                <p class="text-xs text-gray-500">Los filtros aquí también se reflejan en el listado · Solo propiedades con coordenadas válidas</p>
                 <div class="flex gap-2">
                     <button onclick="resetMapFilters()"
                             class="text-sm px-4 py-1.5 rounded border border-gray-300 hover:bg-gray-100">
@@ -623,7 +649,6 @@
                     </button>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -1087,335 +1112,448 @@
       body.classList.toggle('modal-active')
     }
 
-    let cardinalMapInstance   = null;
-let cardinalMapInitialized = false;
-let allMapMarkers         = [];   // todos los markers cargados
-let allPropertiesData     = [];   // datos originales sin filtrar
-
-// Filtros activos dentro del modal
-let mapActiveFilters = {
-    cardinal_zone: '',
-    categoria: '',
-    transaccion: ''
-};
-
-const CUENCA_CENTER  = [-2.9001285, -79.0058965];
-const CUENCA_ZOOM    = 13;
-const CENTER_RADIUS  = 0.012;
-
-const ZONE_COLORS = {
-    norte:  '#3B82F6',
-    sur:    '#EAB308',
-    este:   '#22C55E',
-    oeste:  '#A855F7',
-    centro: '#9CA3AF',
-    'null': '#D1D5DB',
-};
-
-const ZONE_LABELS = {
-    norte: '↑ Norte', sur: '↓ Sur',
-    este: '→ Este',  oeste: '← Oeste', centro: '⊙ Centro'
-};
-
-// ── Abrir / Cerrar ─────────────────────────────────────────
-function openCardinalMap() {
-    let modal = document.getElementById('modal-cardinal-map');
-    modal.style.setProperty('display', 'flex', 'important');
-
-    if (!cardinalMapInitialized) {
-        setTimeout(initCardinalMap, 150);
-    } else {
-        // Refrescar tamaño por si el modal cambió
-        setTimeout(() => cardinalMapInstance.invalidateSize(), 100);
+    // ── Constantes ────────────────────────────────────────────────────────────────
+    const CUENCA_CENTER   = [-2.9001285, -79.0058965];
+    const CUENCA_ZOOM     = 13;
+    const CENTER_RADIUS   = 0.012;   // mismo valor que CardinalZoneService
+    const DIAGONAL_THR    = 0.35;    // mismo valor que CardinalZoneService
+    
+    /**
+     * Colores por zona (deben coincidir con CardinalZoneService::getZoneHexColor)
+     */
+    const ZONE_COLORS = {
+        norte:    '#3B82F6',
+        sur:      '#EAB308',
+        este:     '#22C55E',
+        oeste:    '#A855F7',
+        centro:   '#9CA3AF',
+        noreste:  '#0EA5E9',
+        noroeste: '#6366F1',
+        sureste:  '#84CC16',
+        suroeste: '#F97316',
+        'null':   '#D1D5DB',
+    };
+    
+    const ZONE_LABELS = {
+        norte:    '↑ Norte',
+        sur:      '↓ Sur',
+        este:     '→ Este',
+        oeste:    '← Oeste',
+        centro:   '⊙ Centro',
+        noreste:  '↗ Noreste',
+        noroeste: '↖ Noroeste',
+        sureste:  '↘ Sureste',
+        suroeste: '↙ Suroeste',
+    };
+    
+    // Botones del modal → clases de color activo
+    const ZONE_BTN_ACTIVE_CLASSES = {
+        all:      ['bg-gray-700', 'text-white'],
+        norte:    ['bg-blue-500', 'text-white'],
+        sur:      ['bg-yellow-500', 'text-white'],
+        este:     ['bg-green-500', 'text-white'],
+        oeste:    ['bg-purple-500', 'text-white'],
+        centro:   ['bg-gray-500', 'text-white'],
+        noreste:  ['bg-sky-500', 'text-white'],
+        noroeste: ['bg-indigo-500', 'text-white'],
+        sureste:  ['bg-lime-500', 'text-white'],
+        suroeste: ['bg-orange-500', 'text-white'],
+    };
+    
+    // ── Estado ────────────────────────────────────────────────────────────────────
+    let cardinalMapInstance    = null;
+    let cardinalMapInitialized = false;
+    let allMapMarkers          = [];
+    let allPropertiesData      = [];
+    let zonePolygons           = [];   // capas de cuadrantes/polígonos
+    
+    let mapActiveFilters = {
+        cardinal_zone: '',
+        categoria:     '',
+        transaccion:   ''
+    };
+    
+    // ── Abrir / Cerrar ────────────────────────────────────────────────────────────
+    function openCardinalMap() {
+        document.getElementById('modal-cardinal-map').style.setProperty('display', 'flex', 'important');
+    
+        if (!cardinalMapInitialized) {
+            setTimeout(initCardinalMap, 150);
+        } else {
+            setTimeout(() => cardinalMapInstance.invalidateSize(), 100);
+        }
     }
-}
-
-function closeCardinalMap() {
-    document.getElementById('modal-cardinal-map')
-            .style.setProperty('display', 'none', 'important');
-}
-
-// ── Inicializar mapa ───────────────────────────────────────
-function initCardinalMap() {
-    cardinalMapInstance = L.map('cardinal-map').setView(CUENCA_CENTER, CUENCA_ZOOM);
-
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(cardinalMapInstance);
-
-    drawCardinalQuadrants();
-    loadPropertiesOnMap();
-
-    cardinalMapInitialized = true;
-}
-
-// ── Cuadrantes visuales ────────────────────────────────────
-function drawCardinalQuadrants() {
-    const cx = CUENCA_CENTER[0];
-    const cy = CUENCA_CENTER[1];
-    const ext = 0.08;
-    const r   = CENTER_RADIUS;
-
-    const zones = [
-        { zone: 'norte',  bounds: [[cx + r,   cy - ext], [cx + ext, cy + ext]] },
-        { zone: 'sur',    bounds: [[cx - ext,  cy - ext], [cx - r,   cy + ext]] },
-        { zone: 'este',   bounds: [[cx - ext,  cy + r],   [cx + ext, cy + ext]] },
-        { zone: 'oeste',  bounds: [[cx - ext,  cy - ext], [cx + ext, cy - r]]   },
-    ];
-
-    zones.forEach(function(z) {
-        L.rectangle(z.bounds, {
-            color:       ZONE_COLORS[z.zone],
-            fillColor:   ZONE_COLORS[z.zone],
-            fillOpacity: 0.07,
+    
+    function closeCardinalMap() {
+        document.getElementById('modal-cardinal-map').style.setProperty('display', 'none', 'important');
+    }
+    
+    // ── Inicializar mapa ──────────────────────────────────────────────────────────
+    function initCardinalMap() {
+        cardinalMapInstance = L.map('cardinal-map', {
+            center: CUENCA_CENTER,
+            zoom:   CUENCA_ZOOM,
+            zoomControl: true,
+        });
+    
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 18,
+        }).addTo(cardinalMapInstance);
+    
+        drawCardinalQuadrants();
+        loadPropertiesOnMap();
+    
+        cardinalMapInitialized = true;
+    }
+    
+    // ── Cuadrantes (8 zonas + círculo central) ────────────────────────────────────
+    function drawCardinalQuadrants() {
+        const cx  = CUENCA_CENTER[0];
+        const cy  = CUENCA_CENTER[1];
+        const ext = 0.09;            // extensión máxima del grid
+        const r   = CENTER_RADIUS;   // radio del centro
+    
+        /**
+         * Definimos 8 sectores angulares alrededor del centro.
+         * Cada sector es un polígono aproximado que cubre su cuadrante.
+         *
+         * Para mantener simplicidad usamos rectángulos recortados
+         * divididos en los 4 cuadrantes y luego los 4 intermedios.
+         */
+        const sectors = [
+            // ── Cardinales puros ──────────────────────────────────────────────────
+            {
+                zone: 'norte',
+                // Franja norte: latitudes [cx+r, cx+ext], longitudes [-ext*0.5, +ext*0.5]
+                coords: [
+                    [cx + r,   cy - ext * 0.5],
+                    [cx + r,   cy + ext * 0.5],
+                    [cx + ext, cy + ext * 0.5],
+                    [cx + ext, cy - ext * 0.5],
+                ],
+            },
+            {
+                zone: 'sur',
+                coords: [
+                    [cx - r,   cy - ext * 0.5],
+                    [cx - r,   cy + ext * 0.5],
+                    [cx - ext, cy + ext * 0.5],
+                    [cx - ext, cy - ext * 0.5],
+                ],
+            },
+            {
+                zone: 'este',
+                coords: [
+                    [cx - ext * 0.5, cy + r],
+                    [cx + ext * 0.5, cy + r],
+                    [cx + ext * 0.5, cy + ext],
+                    [cx - ext * 0.5, cy + ext],
+                ],
+            },
+            {
+                zone: 'oeste',
+                coords: [
+                    [cx - ext * 0.5, cy - r],
+                    [cx + ext * 0.5, cy - r],
+                    [cx + ext * 0.5, cy - ext],
+                    [cx - ext * 0.5, cy - ext],
+                ],
+            },
+    
+            // ── Diagonales ───────────────────────────────────────────────────────
+            {
+                zone: 'noreste',
+                coords: [
+                    [cx + r,   cy + r],
+                    [cx + r,   cy + ext],
+                    [cx + ext, cy + ext],
+                    [cx + ext, cy + r],
+                ],
+            },
+            {
+                zone: 'noroeste',
+                coords: [
+                    [cx + r,   cy - r],
+                    [cx + r,   cy - ext],
+                    [cx + ext, cy - ext],
+                    [cx + ext, cy - r],
+                ],
+            },
+            {
+                zone: 'sureste',
+                coords: [
+                    [cx - r,   cy + r],
+                    [cx - r,   cy + ext],
+                    [cx - ext, cy + ext],
+                    [cx - ext, cy + r],
+                ],
+            },
+            {
+                zone: 'suroeste',
+                coords: [
+                    [cx - r,   cy - r],
+                    [cx - r,   cy - ext],
+                    [cx - ext, cy - ext],
+                    [cx - ext, cy - r],
+                ],
+            },
+        ];
+    
+        sectors.forEach(function(s) {
+            var poly = L.polygon(s.coords, {
+                color:       ZONE_COLORS[s.zone],
+                fillColor:   ZONE_COLORS[s.zone],
+                fillOpacity: 0.08,
+                weight:      1.5,
+                dashArray:   '6,4',
+            })
+            .addTo(cardinalMapInstance)
+            .bindTooltip(ZONE_LABELS[s.zone], {
+                permanent:  true,
+                direction:  'center',
+                className:  'zone-label',
+            })
+            .on('click', function() {
+                applyMapFilter('cardinal_zone', s.zone);
+            })
+            .on('mouseover', function() {
+                this.setStyle({ fillOpacity: 0.22 });
+            })
+            .on('mouseout', function() {
+                this.setStyle({ fillOpacity: 0.08 });
+            });
+    
+            zonePolygons.push(poly);
+        });
+    
+        // Centro (círculo)
+        var circle = L.circle([cx, cy], {
+            radius:      r * 111000,
+            color:       ZONE_COLORS['centro'],
+            fillColor:   ZONE_COLORS['centro'],
+            fillOpacity: 0.10,
             weight:      1.5,
-            dashArray:   '5,4'
+            dashArray:   '6,4',
         })
         .addTo(cardinalMapInstance)
-        .bindTooltip(ZONE_LABELS[z.zone], {
+        .bindTooltip('⊙ Centro', {
             permanent:  true,
             direction:  'center',
-            className:  'zone-label'
+            className:  'zone-label',
         })
         .on('click', function() {
-            applyMapFilter('cardinal_zone', z.zone);
+            applyMapFilter('cardinal_zone', 'centro');
+        })
+        .on('mouseover', function() {
+            this.setStyle({ fillOpacity: 0.28 });
+        })
+        .on('mouseout', function() {
+            this.setStyle({ fillOpacity: 0.10 });
         });
-    });
-
-    // Centro
-    L.circle([cx, cy], {
-        radius:      r * 111000,
-        color:       ZONE_COLORS.centro,
-        fillColor:   ZONE_COLORS.centro,
-        fillOpacity: 0.07,
-        weight:      1.5,
-        dashArray:   '5,4'
-    })
-    .addTo(cardinalMapInstance)
-    .bindTooltip('Centro', { permanent: true, direction: 'center', className: 'zone-label' })
-    .on('click', function() {
-        applyMapFilter('cardinal_zone', 'centro');
-    });
-}
-
-// ── Cargar propiedades (pins) ──────────────────────────────
-async function loadPropertiesOnMap() {
-    try {
-        const response = await fetch("{{ route('admin.listings.map.pins') }}");
-        allPropertiesData = await response.json();
-        renderMapMarkers(allPropertiesData);
-    } catch (e) {
-        console.error('Error cargando pins:', e);
-        document.getElementById('map-counter').textContent = 'Error al cargar propiedades';
+    
+        zonePolygons.push(circle);
     }
-}
-
-function renderMapMarkers(data) {
-    // Limpiar markers anteriores
-    allMapMarkers.forEach(m => cardinalMapInstance.removeLayer(m));
-    allMapMarkers = [];
-    let count = 0;
-
-    data.forEach(function(prop) {
-
-        // ✅ Sanitizar: reemplazar coma por punto y convertir a float
-        const lat = parseFloat(String(prop.lat || '').replace(',', '.'));
-        const lng = parseFloat(String(prop.lng || '').replace(',', '.'));
-
-        // ✅ Validar coordenadas antes de crear el marker
-        if (isNaN(lat) || isNaN(lng)) return;
-        if (lat === 0 || lng === 0) return;
-        if (lat < -90  || lat > 90)  return;
-        if (lng < -180 || lng > 180) return;
-
-        const zone  = prop.cardinal_zone || 'null';
-        const color = ZONE_COLORS[zone]  || ZONE_COLORS['null'];
-        const label = ZONE_LABELS[zone]  || 'Sin zona';
-
-        const icon = L.divIcon({
-            className: '',
-            html: '<div style="width:11px;height:11px;background:' + color + ';border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.35)"></div>',
-            iconSize:   [11, 11],
-            iconAnchor: [5.5, 5.5]
-        });
-
-        const priceFormatted = prop.property_price
-            ? '$' + parseInt(prop.property_price).toLocaleString('es-EC')
-            : '—';
-
-        const editUrl = prop.property_by === 'Housing'
-            ? '/admin/housing/property/' + prop.id + '/edit'
-            : '/admin/listings/' + prop.id + '/edit';
-
-        const popup = L.popup({ maxWidth: 220 }).setContent(
-            '<div style="font-family:sans-serif;font-size:13px;line-height:1.4">' +
-            '<p style="font-weight:600;margin:0 0 2px">' + (prop.listing_title || 'Sin título').substring(0, 45) + '</p>' +
-            '<p style="color:#6B7280;font-size:11px;margin:0">Cod: ' + prop.product_code + '</p>' +
-            '<p style="margin:4px 0">' +
-                '<span style="background:' + color + ';color:white;padding:1px 7px;border-radius:10px;font-size:11px">' + label + '</span>' +
-                (prop.listingtypestatus ? '<span style="margin-left:4px;background:#F3F4F6;padding:1px 6px;border-radius:10px;font-size:11px">' + prop.listingtypestatus + '</span>' : '') +
-            '</p>' +
-            '<p style="color:#DC2626;font-weight:700;font-size:15px;margin:2px 0">' + priceFormatted + '</p>' +
-            (prop.city ? '<p style="color:#6B7280;font-size:11px;margin:0">' + prop.city + '</p>' : '') +
-            '<a href="' + editUrl + '" target="_blank" style="display:inline-block;margin-top:6px;color:#2563EB;font-size:11px;text-decoration:none">Ver / Editar propiedad →</a>' +
-            '</div>'
-        );
-
+    
+    // ── Cargar propiedades (pins) ─────────────────────────────────────────────────
+    async function loadPropertiesOnMap() {
         try {
-            const marker = L.marker([lat, lng], { icon: icon })
-                .addTo(cardinalMapInstance)
-                .bindPopup(popup);
-            allMapMarkers.push(marker);
-            count++;
+            const response = await fetch("{{ route('admin.listings.map.pins') }}");
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            allPropertiesData = await response.json();
+            renderMapMarkers(allPropertiesData);
         } catch (e) {
-            console.warn('Marker inválido — ID ' + prop.id + ': ' + e.message);
+            console.error('Error cargando pins:', e);
+            document.getElementById('map-counter').textContent = 'Error al cargar propiedades';
+        }
+    }
+    
+    // ── Renderizar markers ────────────────────────────────────────────────────────
+    function renderMapMarkers(data) {
+        // Limpiar markers anteriores
+        allMapMarkers.forEach(function(m) { cardinalMapInstance.removeLayer(m); });
+        allMapMarkers = [];
+        let count = 0;
+    
+        data.forEach(function(prop) {
+            const lat = parseFloat(String(prop.lat || '').replace(',', '.'));
+            const lng = parseFloat(String(prop.lng || '').replace(',', '.'));
+    
+            if (isNaN(lat) || isNaN(lng)) return;
+            if (lat === 0  || lng === 0)  return;
+            if (lat < -90  || lat > 90)   return;
+            if (lng < -180 || lng > 180)  return;
+    
+            const zone  = prop.cardinal_zone || 'null';
+            const color = ZONE_COLORS[zone]  || ZONE_COLORS['null'];
+            const label = ZONE_LABELS[zone]  || 'Sin zona';
+    
+            const icon = L.divIcon({
+                className: '',
+                html: '<div style="width:11px;height:11px;background:' + color +
+                    ';border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.35)"></div>',
+                iconSize:   [11, 11],
+                iconAnchor: [5.5, 5.5],
+            });
+    
+            const priceFormatted = prop.property_price
+                ? '$' + parseInt(prop.property_price).toLocaleString('es-EC')
+                : '—';
+    
+            const editUrl = prop.property_by === 'Housing'
+                ? '/admin/housing/property/' + prop.id + '/edit'
+                : '/admin/listings/' + prop.id + '/edit';
+    
+            const popup = L.popup({ maxWidth: 230 }).setContent(
+                '<div style="font-family:sans-serif;font-size:13px;line-height:1.45">' +
+                '<p style="font-weight:600;margin:0 0 2px">' + (prop.listing_title || 'Sin título').substring(0, 45) + '</p>' +
+                '<p style="color:#6B7280;font-size:11px;margin:0 0 4px">Cod: ' + prop.product_code + '</p>' +
+                '<p style="margin:0 0 4px">' +
+                    '<span style="background:' + color + ';color:white;padding:1px 8px;border-radius:10px;font-size:11px">' + label + '</span>' +
+                    (prop.listingtypestatus
+                        ? ' <span style="background:#F3F4F6;padding:1px 6px;border-radius:10px;font-size:11px">' + prop.listingtypestatus + '</span>'
+                        : '') +
+                '</p>' +
+                '<p style="color:#DC2626;font-weight:700;font-size:15px;margin:2px 0">' + priceFormatted + '</p>' +
+                (prop.city ? '<p style="color:#6B7280;font-size:11px;margin:0">' + prop.city + '</p>' : '') +
+                '<a href="' + editUrl + '" target="_blank" ' +
+                'style="display:inline-block;margin-top:7px;color:#2563EB;font-size:11px;text-decoration:none">' +
+                'Ver / Editar →</a>' +
+                '</div>'
+            );
+    
+            try {
+                const marker = L.marker([lat, lng], { icon: icon })
+                    .addTo(cardinalMapInstance)
+                    .bindPopup(popup);
+                allMapMarkers.push(marker);
+                count++;
+            } catch(e) {
+                console.warn('Marker inválido — ID ' + prop.id + ': ' + e.message);
+            }
+        });
+    
+        document.getElementById('map-counter').textContent = count.toLocaleString('es-EC') + ' propiedades en mapa';
+    }
+    
+    // ── Filtros ───────────────────────────────────────────────────────────────────
+    function applyMapFilter(filterKey, value) {
+        mapActiveFilters[filterKey] = value;
+    
+        if (filterKey === 'cardinal_zone') {
+            updateZoneButtons(value);
+            var selZone = document.getElementById('b_cardinal_zone');
+            if (selZone) selZone.value = value;
+        }
+        if (filterKey === 'categoria') {
+            var sel = document.getElementById('b_categoria');
+            if (sel) sel.value = value;
+        }
+        if (filterKey === 'transaccion') {
+            var sel = document.getElementById('b_transaccion');
+            if (sel) sel.value = value;
+        }
+    
+        renderMapMarkers(filterPropertiesData());
+        updateFilterBadge();
+        syncLivewireFilters();
+    }
+    
+    function filterPropertiesData() {
+        return allPropertiesData.filter(function(prop) {
+            var pass = true;
+    
+            if (mapActiveFilters.cardinal_zone) {
+                pass = pass && (prop.cardinal_zone === mapActiveFilters.cardinal_zone);
+            }
+            if (mapActiveFilters.categoria) {
+                pass = pass && (String(prop.listingtype) === String(mapActiveFilters.categoria));
+            }
+            if (mapActiveFilters.transaccion) {
+                var status = (prop.listingtypestatus || '').toLowerCase();
+                pass = pass && status.includes(mapActiveFilters.transaccion.toLowerCase());
+            }
+    
+            return pass;
+        });
+    }
+    
+    function updateZoneButtons(activeZone) {
+        const allBtnIds = ['all', 'norte', 'sur', 'este', 'oeste', 'centro',
+                            'noreste', 'noroeste', 'sureste', 'suroeste'];
+    
+        allBtnIds.forEach(function(z) {
+            var btn = document.getElementById('mapbtn-' + z);
+            if (!btn) return;
+    
+            // Quitar todas las clases de color activo
+            Object.values(ZONE_BTN_ACTIVE_CLASSES).flat().forEach(function(cls) {
+                btn.classList.remove(cls);
+            });
+            btn.classList.remove('active-zone-btn');
+    
+            var isActive = (z === 'all' && activeZone === '') || z === activeZone;
+    
+            if (isActive) {
+                var classes = ZONE_BTN_ACTIVE_CLASSES[z] || ['bg-gray-500', 'text-white'];
+                classes.forEach(function(cls) { btn.classList.add(cls); });
+                btn.classList.add('active-zone-btn');
+            }
+        });
+    }
+    
+    function updateFilterBadge() {
+        var badge  = document.getElementById('map-filter-active');
+        var active = Object.values(mapActiveFilters).some(function(v) { return v !== ''; });
+    
+        if (active) {
+            badge.classList.remove('hidden');
+            var parts = [];
+            if (mapActiveFilters.cardinal_zone) parts.push(ZONE_LABELS[mapActiveFilters.cardinal_zone] || mapActiveFilters.cardinal_zone);
+            if (mapActiveFilters.categoria)     parts.push('Cat: ' + mapActiveFilters.categoria);
+            if (mapActiveFilters.transaccion)   parts.push(mapActiveFilters.transaccion);
+            badge.textContent = 'Filtros: ' + parts.join(' · ');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+    
+    function resetMapFilters() {
+        mapActiveFilters = { cardinal_zone: '', categoria: '', transaccion: '' };
+    
+        var selCat   = document.getElementById('map-filter-categoria');
+        var selTrans = document.getElementById('map-filter-transaccion');
+        if (selCat)   selCat.value   = '';
+        if (selTrans) selTrans.value = '';
+    
+        updateZoneButtons('');
+    
+        ['b_cardinal_zone', 'b_categoria', 'b_transaccion'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+    
+        renderMapMarkers(allPropertiesData);
+        updateFilterBadge();
+        syncLivewireFilters();
+    }
+    
+    function syncLivewireFilters() {
+        window.dispatchEvent(new CustomEvent('cardinal-filter-changed', {
+            detail: {
+                cardinal_zone: mapActiveFilters.cardinal_zone,
+                categoria:     mapActiveFilters.categoria,
+                transaccion:   mapActiveFilters.transaccion,
+            }
+        }));
+    }
+    
+    // Cerrar con Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            var modal = document.getElementById('modal-cardinal-map');
+            if (modal && modal.style.display !== 'none') closeCardinalMap();
         }
     });
-
-    document.getElementById('map-counter').textContent = count + ' propiedades en mapa';
-}
-
-// ── Aplicar filtro desde el modal ──────────────────────────
-function applyMapFilter(filterKey, value) {
-    mapActiveFilters[filterKey] = value;
-
-    // Actualizar botones de zona
-    if (filterKey === 'cardinal_zone') {
-        updateZoneButtons(value);
-
-        // Sincronizar el select externo del listado
-        let selectZone = document.getElementById('b_cardinal_zone');
-        if (selectZone) selectZone.value = value;
-    }
-
-    // Sincronizar selects externos
-    if (filterKey === 'categoria') {
-        let sel = document.getElementById('b_categoria');
-        if (sel) sel.value = value;
-    }
-    if (filterKey === 'transaccion') {
-        let sel = document.getElementById('b_transaccion');
-        if (sel) sel.value = value;
-    }
-
-    // Filtrar markers en el mapa
-    const filtered = filterPropertiesData();
-    renderMapMarkers(filtered);
-
-    // Actualizar badge de filtro activo
-    updateFilterBadge();
-
-    // Actualizar el listado de Livewire SIN cerrar el modal
-    syncLivewireFilters();
-}
-
-function filterPropertiesData() {
-    return allPropertiesData.filter(function(prop) {
-        let pass = true;
-
-        if (mapActiveFilters.cardinal_zone) {
-            pass = pass && (prop.cardinal_zone === mapActiveFilters.cardinal_zone);
-        }
-        if (mapActiveFilters.categoria) {
-            pass = pass && (String(prop.listingtype) === String(mapActiveFilters.categoria));
-        }
-        if (mapActiveFilters.transaccion) {
-            let status = (prop.listingtypestatus || '').toLowerCase();
-            let filter = mapActiveFilters.transaccion.toLowerCase();
-            pass = pass && status.includes(filter);
-        }
-
-        return pass;
-    });
-}
-
-function updateZoneButtons(activeZone) {
-    const zoneBtns = ['all', 'norte', 'sur', 'este', 'oeste', 'centro'];
-    zoneBtns.forEach(function(z) {
-        let btn = document.getElementById('mapbtn-' + z);
-        if (!btn) return;
-
-        // Quitar estilos activos
-        btn.classList.remove(
-            'bg-gray-700', 'bg-blue-500', 'bg-yellow-500',
-            'bg-green-500', 'bg-purple-500', 'bg-gray-500',
-            'text-white', 'active-zone-btn'
-        );
-
-        // Determinar si este botón está activo
-        const isActive = (z === 'all' && activeZone === '') || z === activeZone;
-
-        if (isActive) {
-            btn.classList.add('text-white', 'active-zone-btn');
-            const colorMap = {
-                all: 'bg-gray-700', norte: 'bg-blue-500', sur: 'bg-yellow-500',
-                este: 'bg-green-500', oeste: 'bg-purple-500', centro: 'bg-gray-500'
-            };
-            btn.classList.add(colorMap[z]);
-        }
-    });
-}
-
-function updateFilterBadge() {
-    let badge  = document.getElementById('map-filter-active');
-    let active = Object.values(mapActiveFilters).some(v => v !== '');
-    if (active) {
-        badge.classList.remove('hidden');
-        let parts = [];
-        if (mapActiveFilters.cardinal_zone) parts.push(ZONE_LABELS[mapActiveFilters.cardinal_zone]);
-        if (mapActiveFilters.categoria)     parts.push('Cat: ' + mapActiveFilters.categoria);
-        if (mapActiveFilters.transaccion)   parts.push(mapActiveFilters.transaccion);
-        badge.textContent = 'Filtros: ' + parts.join(' · ');
-    } else {
-        badge.classList.add('hidden');
-    }
-}
-
-function resetMapFilters() {
-    mapActiveFilters = { cardinal_zone: '', categoria: '', transaccion: '' };
-
-    // Resetear selects del modal
-    let selCat   = document.getElementById('map-filter-categoria');
-    let selTrans = document.getElementById('map-filter-transaccion');
-    if (selCat)   selCat.value   = '';
-    if (selTrans) selTrans.value = '';
-
-    // Resetear botones de zona
-    updateZoneButtons('');
-
-    // Resetear selects externos del listado
-    let selZone  = document.getElementById('b_cardinal_zone');
-    let selCatEx = document.getElementById('b_categoria');
-    let selTransEx = document.getElementById('b_transaccion');
-    if (selZone)   selZone.value   = '';
-    if (selCatEx)  selCatEx.value  = '';
-    if (selTransEx) selTransEx.value = '';
-
-    // Mostrar todos los markers
-    renderMapMarkers(allPropertiesData);
-    updateFilterBadge();
-
-    // Limpiar filtros en Livewire
-    syncLivewireFilters();
-}
-
-// Cerrar con Escape (solo si el modal está abierto)
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        let modal = document.getElementById('modal-cardinal-map');
-        if (modal && modal.style.display !== 'none') closeCardinalMap();
-    }
-});
-
-function syncLivewireFilters() {
-    // Comunicar al componente Livewire mediante evento de ventana
-    window.dispatchEvent(new CustomEvent('cardinal-filter-changed', {
-        detail: {
-            cardinal_zone: mapActiveFilters.cardinal_zone,
-            categoria:     mapActiveFilters.categoria,
-            transaccion:   mapActiveFilters.transaccion
-        }
-    }));
-}
 </script>
 @endsection

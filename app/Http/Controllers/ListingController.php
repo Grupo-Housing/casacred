@@ -377,6 +377,21 @@ class ListingController extends Controller
 
             $listing->is_dual_operation = $request->is_dual_operation;
 
+            $manualZone = $request->input('cardinal_zone');
+
+            if (!empty($manualZone)) {
+                $listing->cardinal_zone = $manualZone;
+            } else {
+                $computed = (new CardinalZoneService())->calculate(
+                    (float) $request->lat,
+                    (float) $request->lng,
+                    $request->city ?? $listing->city
+                );
+                if ($computed !== null) {
+                    $listing->cardinal_zone = $computed;
+                }
+            }
+
             $listing->save();
 
             if ($this->iscomplete($listing)) {
@@ -774,6 +789,21 @@ class ListingController extends Controller
             (float) $request->lng,
             $request->city ?? $listing->city
         );
+
+        $manualZone = $request->input('cardinal_zone');
+
+        if (!empty($manualZone)) {
+            $listing->cardinal_zone = $manualZone;
+        } else {
+            $computed = (new CardinalZoneService())->calculate(
+                (float) $request->lat,
+                (float) $request->lng,
+                $request->city ?? $listing->city
+            );
+            if ($computed !== null) {
+                $listing->cardinal_zone = $computed;
+            }
+        }
 
         $listing->save();
 
