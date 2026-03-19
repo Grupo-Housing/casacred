@@ -8,7 +8,7 @@ class CardinalZoneService
         'cuenca' => ['lat' => -2.9001285, 'lng' => -79.0058965, 'radius' => 0.012],
     ];
 
-    private const DIAGONAL_THRESHOLD = 0.35;
+    private const DIAGONAL_THRESHOLD = 0.25;
 
     /**
      * Mapa explícito para zonas diagonales.
