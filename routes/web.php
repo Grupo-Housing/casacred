@@ -3,6 +3,7 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ContactQueueController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ListingController;
@@ -249,6 +250,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:sanctum', 'verified']]
 
     Route::get('/properties/valid/update', [ListingController::class, 'validateListingsCompleteness'])->name('update.valid.properties');
     Route::get('/search-cadastral-key/{clave?}', [ListingController::class, 'searchCadastralKey'])->name('search.cadastral.key');
+
+    Route::get('/contact-queue',        [ContactQueueController::class, 'view'])->name('contact.queue.view');   // página blade
+    Route::get('/contact-queue/data',   [ContactQueueController::class, 'index'])->name('contact.queue.index'); // retorna JSON
+    Route::post('/contact-queue/done',  [ContactQueueController::class, 'markDone'])->name('contact.queue.done');
+    Route::post('/contact-queue/skip',  [ContactQueueController::class, 'skip'])->name('contact.queue.skip');
 });
 
 //BLOG

@@ -17,51 +17,49 @@
 
 @section('content')
 <main class="overflow-x-hidden overflow-y-auto">
-    <div class="mx-4 border my-3 rounded p-4">
-        <p class="font-semibold"><i class="fas fa-chart-bar text-gray-600"></i> ESTADISTICAS PROPIEDADES</p>
-        <div class="mx-auto my-2">
-            {{-- <h3 class="text-gray-700 text-3xl font-medium">Bienvenido</h3>   --}}
-            <div class="flex">
-                <div class="mx-1 border p-2 rounded hover:bg-gray-800 hover:text-white">
-                    <p>Total de Propiedades Disponibles: <b>{{$totalavailableproperties}}</b></p>
-                </div>
-                <div class="mx-1 border p-2 rounded hover:bg-gray-800 hover:text-white">
-                    <p>Total de Propiedades Activas: <b>{{$totalactivatedproperties}}</b></p>
-                </div>
+
+    <div class="grid grid-cols-1 gap-4 p-4">
+    
+    {{-- Estadísticas --}}
+    <div class="border rounded-lg p-4 shadow-sm bg-white">
+        <p class="font-semibold text-gray-700 mb-3">
+            <i class="fas fa-chart-bar text-gray-600 mr-1"></i> ESTADÍSTICAS PROPIEDADES
+        </p>
+        <div class="flex flex-wrap gap-2 mb-3">
+            <div class="border px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition text-sm">
+                Total Disponibles: <b>{{$totalavailableproperties}}</b>
+            </div>
+            <div class="border px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition text-sm">
+                Total Activas: <b>{{$totalactivatedproperties}}</b>
             </div>
         </div>
-        <div class="mx-auto my-2">
-            <div class="flex text-sm">
-                <div class="mx-1 border p-2 rounded hover:bg-gray-800 hover:text-white">
-                    <p><i class="fa-sharp fa-solid fa-circle text-gray-500"></i> Casas: <b>{{$totalcasas}}</b></p>
-                </div>
-                <div class="mx-1 border p-2 rounded hover:bg-gray-800 hover:text-white">
-                    <p><i class="fa-sharp fa-solid fa-circle text-gray-500"></i> Departamentos: <b>{{$totaldepartamentos}}</b></p>
-                </div>
-                <div class="mx-1 border p-2 rounded hover:bg-gray-800 hover:text-white">
-                    <p><i class="fa-sharp fa-solid fa-circle text-gray-500"></i> Casas Comerciales: <b>{{$totalcasascomer}}</b></p>
-                </div>
-                <div class="mx-1 border p-2 rounded hover:bg-gray-800 hover:text-white">
-                    <p><i class="fa-sharp fa-solid fa-circle text-gray-500"></i> Terrenos: <b>{{$totalterrenos}}</b></p>
-                </div>
-                <div class="mx-1 border p-2 rounded hover:bg-gray-800 hover:text-white">
-                    <p><i class="fa-sharp fa-solid fa-circle text-gray-500"></i> Quintas: <b>{{$totalquintas}}</b></p>
-                </div>
-                <div class="mx-1 border p-2 rounded hover:bg-gray-800 hover:text-white">
-                    <p><i class="fa-sharp fa-solid fa-circle text-gray-500"></i> Haciendas: <b>{{$totalhaciendas}}</b></p>
-                </div>
-                <div class="mx-1 border p-2 rounded hover:bg-gray-800 hover:text-white">
-                    <p><i class="fa-sharp fa-solid fa-circle text-gray-500"></i> Locales Comerciales: <b>{{$totallocalcomer}}</b></p>
-                </div>
-                <div class="mx-1 border p-2 rounded hover:bg-gray-800 hover:text-white">
-                    <p><i class="fa-sharp fa-solid fa-circle text-gray-500"></i> Oficinas: <b>{{$totaloficinas}}</b></p>
-                </div>
-                <div class="mx-1 border p-2 rounded hover:bg-gray-800 hover:text-white">
-                    <p><i class="fa-sharp fa-solid fa-circle text-gray-500"></i> Suites: <b>{{$totalsuites}}</b></p>
-                </div>
+        <div class="flex flex-wrap gap-2">
+            @foreach([
+                ['icon' => 'fa-circle', 'label' => 'Casas', 'value' => $totalcasas],
+                ['icon' => 'fa-circle', 'label' => 'Departamentos', 'value' => $totaldepartamentos],
+                ['icon' => 'fa-circle', 'label' => 'Casas Comerciales', 'value' => $totalcasascomer],
+                ['icon' => 'fa-circle', 'label' => 'Terrenos', 'value' => $totalterrenos],
+                ['icon' => 'fa-circle', 'label' => 'Quintas', 'value' => $totalquintas],
+                ['icon' => 'fa-circle', 'label' => 'Haciendas', 'value' => $totalhaciendas],
+                ['icon' => 'fa-circle', 'label' => 'Locales Comerciales', 'value' => $totallocalcomer],
+                ['icon' => 'fa-circle', 'label' => 'Oficinas', 'value' => $totaloficinas],
+                ['icon' => 'fa-circle', 'label' => 'Suites', 'value' => $totalsuites],
+            ] as $item)
+            <div class="border px-2 py-1 rounded-lg hover:bg-gray-800 hover:text-white transition text-xs">
+                <i class="fa-sharp fa-solid {{ $item['icon'] }} text-gray-400 mr-1"></i>
+                {{ $item['label'] }}: <b>{{ $item['value'] }}</b>
             </div>
+            @endforeach
         </div>
     </div>
+
+    {{-- Carousel --}}
+    <div class="border rounded-lg shadow-sm bg-white overflow-hidden">
+        <x-contact-queue-carousel />
+        <x-modal-update-contact-date />
+    </div>
+
+</div>
 
     @if(Auth::user()->id)
         <div class="grid grid-cols-1 mx-4 w-max-content">

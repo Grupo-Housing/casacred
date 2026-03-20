@@ -87,6 +87,15 @@
                 <a style="text-decoration: none" href="{{ Route('updated.properties') }}" class="flex items-center px-4 text-sm text-white hover:bg-gray-700 hover:bg-opacity-25 hover:text-white @if(Request::is('admin/updated-properties*') || (Request::is('admin/updated-properties*') && Str::contains(URL::previous(), 'admin/updated-properties'))) border-l-4 border-white bg-gray-900 @endif">
                     <span class="@if(Request::is('admin/show-listing*')) py-3 @else py-4 mx-3 @endif font-semibold">Actualización de propiedades</span>
                 </a>
+
+                @if(Auth::user()->id == 900 || Auth::user()->id == 901 || Auth::user()->id == 147)
+                    <button 
+                        onclick="document.getElementById('contact-queue-panel').style.display='block'; document.getElementById('contact-queue-panel').__x.$data.panelVisible = true"
+                        class="flex items-center w-full px-4 text-sm text-white hover:bg-gray-700 hover:bg-opacity-25 hover:text-white">
+                        <span class="mx-3 py-4">📞 Cola de Contacto</span>
+                    </button>
+                @endif
+
             @if (Auth::id()==123 || Auth::id()==147 || Auth::id()==15 || Auth::user()->id == 148 || Auth::user()->id == 929 || Auth::user()->id == 193 || Auth::user()->id == 934)
 
                 <a style="text-decoration: none" href="{{ route('admin.notifications') }}" class="flex items-center @if(Request::is('admin/show-listing*')) px-2 @else px-4 @endif text-sm text-white @if(Request::is('admin/notification*')) border-l-4 border-white bg-gray-800 @endif hover:bg-gray-700 hover:bg-opacity-25 hover:text-white">
