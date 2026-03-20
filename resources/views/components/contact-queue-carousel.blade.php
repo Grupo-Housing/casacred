@@ -1,7 +1,18 @@
 {{-- Panel flotante arrastrable de Cola de Contacto --}}
 <div 
     x-data="contactCarousel()" 
-    x-init="loadQueue()"
+    x-init="
+        loadQueue();
+        $nextTick(() => {
+            window.addEventListener('contact-done', () => {
+                advanceAfterAction();
+            });
+            window.addEventListener('open-queue-panel', () => {
+                panelVisible = true;
+                minimized    = false;
+            });
+        })
+    "
     id="contact-queue-panel"
     style="position: fixed; bottom: 24px; right: 24px; width: 340px; z-index: 9999; cursor: default;"
     class="bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
@@ -144,12 +155,13 @@
 <script>
 function contactCarousel() {
     return {
-        items:     [],
-        current:   0,
-        total:     0,
-        loading:   true,
-        minimized: false,
-        panelVisible: true,
+        items:          [],
+        current:        0,
+        total:          0,
+        loading:        false,
+        minimized:      false,
+        panelVisible:   true,
+        savingNoAnswer: false,
 
         async loadQueue() {
             this.loading = true;
@@ -165,6 +177,49 @@ function contactCarousel() {
             this.loading = false;
         },
 
+        openContactModal() {
+            const input = document.getElementById('product_code');
+            if (input) input.value = this.items[this.current].listing.product_code;
+            abrirModal();
+        },
+
+        // ✅ AQUÍ va advanceAfterAction
+        advanceAfterAction() {
+            this.items.splice(this.current, 1);
+            this.total--;
+            if (this.current >= this.total) {
+                this.current = Math.max(0, this.total - 1);
+            }
+        },
+
+        async registerNoAnswer() {
+            if (this.savingNoAnswer) return;
+            this.savingNoAnswer = true;
+            try {
+                const res = await fetch("{{ route('update.contact.date') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        comentario:         'Sin respuesta - registrado desde panel',
+                        respuesta_contacto: 'NO CONTESTA',
+                        product_code:       this.items[this.current].listing.product_code
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    this.advanceAfterAction(); // ✅ llama al método
+                } else {
+                    alert('Error al registrar. Intente de nuevo.');
+                }
+            } catch(e) {
+                console.error('Error:', e);
+            }
+            this.savingNoAnswer = false;
+        },
+
         async skipCurrent() {
             const queueId = this.items[this.current].id;
             await fetch("{{ route('contact.queue.skip') }}", {
@@ -175,7 +230,6 @@ function contactCarousel() {
                 },
                 body: JSON.stringify({ queue_id: queueId })
             });
-            // Mover al final del array en lugar de eliminar
             const skipped = this.items.splice(this.current, 1)[0];
             this.items.push(skipped);
             if (this.current >= this.total) this.current = 0;

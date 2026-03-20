@@ -1116,32 +1116,37 @@ class ListingController extends Controller
 
     public function updateContactDate(Request $request)
     {
-
         $product_code = $request->input('product_code');
-        $comment = $request->input('comentario');
-        $response = $request->input('respuesta_contacto');
+        $comment      = $request->input('comentario');
+        $response     = $request->input('respuesta_contacto');
 
-        $propertie = Listing::where('product_code', $product_code)->first();
-
+        $propertie       = Listing::where('product_code', $product_code)->first();
         $currentDateTime = now();
 
-        // Verificamos si la respuesta no es "NO CONTESTA" para actualizar la fecha
         if ($response !== 'NO CONTESTA') {
             $propertie->contact_at = $currentDateTime;
         } else {
             $propertie->no_answer_at = $currentDateTime;
         }
-
         $propertie->save();
 
-        // Creamos el comentario con el valor de la respuesta
         Comment::create([
-            'listing_id' => $propertie->id,
-            'user_id' => Auth::user()->id,
+            'listing_id'    => $propertie->id,
+            'user_id'       => Auth::user()->id,
             'property_code' => $propertie->product_code,
-            'type' => 'Contact',
-            'comment' => $comment
+            'type'          => 'Contact',
+            'comment'       => $comment
         ]);
+
+        // ✅ Marcar como done buscando por listing_id y user_id
+        // No dependemos del queue_id del frontend
+        \App\Models\ContactQueue::where('listing_id', $propertie->id)
+            ->where('user_id', Auth::id())
+            ->where('status', 'pending')
+            ->update([
+                'status'       => 'done',
+                'completed_at' => $currentDateTime,
+            ]);
 
         return response()->json(['success' => true]);
     }
