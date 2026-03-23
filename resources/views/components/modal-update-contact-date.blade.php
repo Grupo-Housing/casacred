@@ -1,5 +1,5 @@
 <div>
-    <div id="miModal" class="fixed inset-0 overflow-y-auto hidden">
+    <div id="miModal" class="fixed inset-0 overflow-y-auto hidden" style="z-index: 10000">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
                 <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
@@ -111,16 +111,13 @@
     }
 
     function saveDataContactDate() {
-        
-        // Get and trim the value of the comment field
-        const comentario = document.getElementById('comentario').value.trim();
+    
+        const comentario   = document.getElementById('comentario').value.trim();
         const product_code = document.getElementById('product_code').value;
 
-        // Get the value of the selected radio button
         const respuestaElement = document.querySelector('input[name="respuesta"]:checked');
         const respuesta = respuestaElement ? respuestaElement.value : '';
 
-        // Check if all fields are filled
         if (!comentario || !respuesta) {
             showMessageModal('Error de Formulario', 'Por favor, complete todos los campos.');
             return;
@@ -130,12 +127,13 @@
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Asegúrate de tener esto en tu Blade
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             body: JSON.stringify({
-                comentario: comentario,
+                comentario:         comentario,
                 respuesta_contacto: respuesta,
-                product_code: product_code
+                product_code:       product_code
+                // ✅ Ya no necesitamos enviar queue_id
             })
         })
         .then(response => response.json())
@@ -143,17 +141,18 @@
             if (data.success) {
                 cerrarModal();
                 cleanData();
-                //alert('Fecha actualizada con éxito.');
-                // Aquí puedes agregar una notificación de éxito o actualizar la tabla
                 showMessageModal('Éxito', 'Fecha de contacto actualizada con éxito.');
+
+                // ✅ Solo disparar evento para que el carousel avance visualmente
+                window.dispatchEvent(new CustomEvent('contact-done'));
+
             } else {
-                //alert('Error al actualizar la fecha de contacto.');
                 showMessageModal('Error', 'Error al actualizar la fecha de contacto.');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showMessageModal('Error', 'Se produjo un error al procesar la solicitud. Por favor, intente de nuevo más tarde.');
+            showMessageModal('Error', 'Se produjo un error al procesar la solicitud.');
         });
     }
 </script>
