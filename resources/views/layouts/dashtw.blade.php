@@ -116,6 +116,13 @@
                 <a style="text-decoration: none !important" href="{{route('admin.soldout')}}" class="flex items-center @if(Request::is('admin/show-listing*')) px-2 @else px-4 @endif text-sm text-white @if(Request::is('admin/sold-out*') || (Request::is('admin/show-listing*') && Str::contains(URL::previous(), 'admin/sold-out'))) border-l-4 border-white bg-gray-800 @endif hover:bg-gray-700 hover:bg-opacity-25 hover:text-white">
                     <span class="mx-3 @if(Request::is('admin/show-listing*')) py-3 @else py-4 @endif">Archivadas</span>
                 </a>
+
+                <a style="text-decoration: none" href="{{ route('admin.contact.report') }}"
+                    class="flex items-center px-4 text-sm text-white
+                    @if(Request::is('admin/contact-report*')) border-l-4 border-white bg-gray-900 @endif
+                    hover:bg-gray-700 hover:bg-opacity-25 hover:text-white">
+                        <span class="mx-3 py-4">📊 Reporte Contactos</span>
+                </a>
                 
             @endif
             @if(Auth::user()->id == 148 || Auth::user()->email == "developer2@casacredito.com" || Auth::user()->id == 929)

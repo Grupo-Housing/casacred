@@ -4,6 +4,7 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ContactQueueController;
+use App\Http\Controllers\ContactReportController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ListingController;
@@ -255,6 +256,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:sanctum', 'verified']]
     Route::get('/contact-queue/data',   [ContactQueueController::class, 'index'])->name('contact.queue.index'); // retorna JSON
     Route::post('/contact-queue/done',  [ContactQueueController::class, 'markDone'])->name('contact.queue.done');
     Route::post('/contact-queue/skip',  [ContactQueueController::class, 'skip'])->name('contact.queue.skip');
+
+    Route::get('/contact-report', [ContactReportController::class, 'index'])->name('admin.contact.report');
 });
 
 //BLOG
