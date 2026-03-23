@@ -12,7 +12,7 @@ class AssignContactQueue extends Command
     protected $signature   = 'queue:assign-contacts';
     protected $description = 'Distribuye propiedades disponibles entre las asesoras para contactar';
 
-    const ADVISOR_IDS = [900, 901];
+    const ADVISOR_IDS = [934, 942];
 
     public function handle()
     {
