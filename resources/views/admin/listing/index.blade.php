@@ -121,6 +121,14 @@
                                     <label class="text-xs text-gray-400">Código</label>
                                     <input class="block w-20 pl-2 border-gray-300 hover:border-gray-400 shadow-md focus:outline-none" id="b_code" name="b_code" type="text" placeholder="Ej: 1733">
                                 </div>
+                                <div class="w-auto bg-gray-100 pt-4 pb-8 pr-1 pl-1 text-justify">
+                                    <label class="text-xs text-gray-400">Propietario</label>
+                                    <input class="block w-36 pl-2 border-gray-300 hover:border-gray-400 shadow-md focus:outline-none" 
+                                        id="b_owner" 
+                                        name="b_owner" 
+                                        type="text" 
+                                        placeholder="Nombre, email o celular">
+                                </div>
                                 <div class="w-auto bg-gray-100 pt-4 pb-8 pl-2 text-justify">
                                     <label class="text-xs text-gray-400">Tipo de propiedad</label>
                                     <select class="block w-auto pl-2 border-gray-300 hover:border-gray-400 shadow-md leading-tight focus:outline-none" id="b_categoria">
@@ -717,6 +725,14 @@
                     <label class="text-xs text-gray-400">Código</label>
                     <input class="block w-32 pl-2 border-gray-300 hover:border-gray-400 shadow-md focus:outline-none rounded" id="b_code" name="b_code" type="text" placeholder="Ej: 1733">
                 </div>
+            </div>
+            <div class="w-auto bg-gray-100 pt-4 pb-8 pr-1 pl-1 text-justify">
+                <label class="text-xs text-gray-400">Propietario / Email / Celular</label>
+                <input class="block w-36 pl-2 border-gray-300 hover:border-gray-400 shadow-md focus:outline-none" 
+                    id="b_owner" 
+                    name="b_owner" 
+                    type="text" 
+                    placeholder="Nombre, email o teléfono">
             </div>
             <div class="grid grid-cols-2 my-4">
                 <div class="w-auto text-justify">

@@ -32,7 +32,8 @@ class Proplisttw extends Component
         $bathrooms,
         $plusvalia,
         $transaccion,
-        $tagstatus;
+        $tagstatus,
+        $owner_search;
 
     //variables para guardar el dia que se contactan
     public $idContactDay, $commentContactDay, $dateContactDay;
@@ -123,6 +124,15 @@ class Proplisttw extends Component
 
         if ($this->cardinal_zone) {
             $properties_filter->where('cardinal_zone', $this->cardinal_zone);
+        }
+
+        if ($this->owner_search) {
+            $search = $this->owner_search;
+            $properties_filter->where(function ($query) use ($search) {
+                $query->where('owner_name',    'LIKE', '%' . $search . '%')
+                    ->orWhere('owner_email', 'LIKE', '%' . $search . '%')
+                    ->orWhere('phone_number', 'LIKE', '%' . $search . '%');
+            });
         }
 
         if ($this->status == 'A')                                  $properties_filter->where('status', 1); //agregarle || $this->variable == null para muestre por defecto las activas y disponibles

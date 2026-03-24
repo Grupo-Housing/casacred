@@ -634,6 +634,8 @@ function clear_filters(){
 
     let b_asesor = document.getElementById('b_asesor').value = "";
 
+    document.getElementById('b_owner').value = "";
+
     let b_fromdate = document.getElementById('fromdate').value = "";
     let b_untildate = document.getElementById('untildate').value = "";
     filter_properties(); toggleModal();
@@ -649,6 +651,8 @@ function filter_properties(){
     let b_view      = document.getElementById('view').value;
     //let b_available = document.getElementById('b_available').value; //variable para buscar por disponibilidad
     let b_current_url = document.getElementById('b_current_url').value; //saber la ruta actual
+
+    let b_owner = document.getElementById('b_owner') ? document.getElementById('b_owner').value : '';
 
 
     //variables nuevas para buscar por pais, provincia y ciudad
@@ -727,6 +731,8 @@ function filter_properties(){
     @this.set('city', b_city);
     @this.set('sector', b_sector);
     @this.set('zona', b_zona);
+
+    @this.set('owner_search', b_owner);
 
     @this.set('fromprice', b_minprice);
     @this.set('uptoprice', b_maxprice);
