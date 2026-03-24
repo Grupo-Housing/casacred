@@ -57,7 +57,7 @@ class ContactReportController extends Controller
         // ── Propiedades desactivadas (detalle) ──────────────────────────
 
         // status = 0: desactivadas
-        $deactivatedListings = Comment::with('listing:id,product_code,listing_title')
+        $deactivatedListings = Comment::with(['listing:id,product_code,listing_title', 'user:id,name'])
             ->where('type', 'status')
             ->where('value', 0)
             ->whereBetween('created_at', [$dateFrom, $dateTo])
@@ -67,7 +67,7 @@ class ContactReportController extends Controller
             ->unique('listing_id');
 
         // available = 2: ya no disponibles
-        $unavailableListings = Comment::with('listing:id,product_code,listing_title')
+        $unavailableListings = Comment::with(['listing:id,product_code,listing_title', 'user:id,name'])
             ->where('type', 'available')
             ->where('value', 2)
             ->whereBetween('created_at', [$dateFrom, $dateTo])
@@ -77,7 +77,7 @@ class ContactReportController extends Controller
             ->unique('listing_id');
 
         // ── Propiedades con cambio de precio (detalle) ──────────────────
-        $priceChangedListings = Comment::with('listing:id,product_code,listing_title')
+        $priceChangedListings = Comment::with(['listing:id,product_code,listing_title', 'user:id,name'])
             ->where('type', 'price')
             ->whereBetween('created_at', [$dateFrom, $dateTo])
             ->select('listing_id', 'comment', 'property_price_prev', 'property_price', 'created_at', 'user_id')
@@ -117,7 +117,7 @@ class ContactReportController extends Controller
             ->get();
 
         // ── Últimas actualizaciones detalladas ──────────────────────────
-        $recentActivity = Comment::with('listing:id,product_code,listing_title')
+        $recentActivity = Comment::with(['listing:id,product_code,listing_title', 'user:id,name'])
             ->whereIn('type', ['Contact', 'price', 'status', 'available'])
             ->whereBetween('created_at', [$dateFrom, $dateTo])
             ->orderBy('created_at', 'desc')

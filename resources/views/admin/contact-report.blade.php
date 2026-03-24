@@ -138,7 +138,8 @@
                     <span class="text-lg">🏠</span>
                 </div>
                 <p class="text-3xl font-bold text-gray-900">{{ $totalUniqueListings }}</p>
-                <p class="text-xs text-gray-400 mt-1">propiedades únicas con actividad</p>
+                <p class="text-xs text-gray-400 mt-1">propiedades distintas con cualquier actividad</p>
+                <p class="text-xs text-gray-300 mt-0.5">(contacto + precio + estado, sin repetir)</p>
             </div>
         </div>
 
@@ -291,6 +292,7 @@
                                 <tr class="bg-gray-50 border-b border-gray-100">
                                     <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase">Código</th>
                                     <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase">Propiedad</th>
+                                    <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Asesora</th>
                                     <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Comentario</th>
                                     <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase hidden md:table-cell">Fecha</th>
                                 </tr>
@@ -312,6 +314,14 @@
                                         <span class="text-gray-700 text-xs truncate block max-w-[200px]">
                                             {{ $item->listing->listing_title ?? '—' }}
                                         </span>
+                                    </td>
+                                    <td class="py-2 px-3 hidden sm:table-cell">
+                                        <div class="flex items-center gap-1.5">
+                                            <div class="w-5 h-5 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                                                {{ strtoupper(substr($item->user->name ?? 'U', 0, 1)) }}
+                                            </div>
+                                            <span class="text-xs text-gray-600">{{ $item->user->name ?? '—' }}</span>
+                                        </div>
                                     </td>
                                     <td class="py-2 px-3 hidden sm:table-cell">
                                         <span class="text-gray-500 text-xs truncate block max-w-[250px]">{{ $item->comment }}</span>
@@ -336,6 +346,7 @@
                                 <tr class="bg-gray-50 border-b border-gray-100">
                                     <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase">Código</th>
                                     <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase">Propiedad</th>
+                                    <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Asesora</th>
                                     <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Comentario</th>
                                     <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase hidden md:table-cell">Fecha</th>
                                 </tr>
@@ -357,6 +368,14 @@
                                         <span class="text-gray-700 text-xs truncate block max-w-[200px]">
                                             {{ $item->listing->listing_title ?? '—' }}
                                         </span>
+                                    </td>
+                                    <td class="py-2 px-3 hidden sm:table-cell">
+                                        <div class="flex items-center gap-1.5">
+                                            <div class="w-5 h-5 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                                                {{ strtoupper(substr($item->user->name ?? 'U', 0, 1)) }}
+                                            </div>
+                                            <span class="text-xs text-gray-600">{{ $item->user->name ?? '—' }}</span>
+                                        </div>
                                     </td>
                                     <td class="py-2 px-3 hidden sm:table-cell">
                                         <span class="text-gray-500 text-xs truncate block max-w-[250px]">{{ $item->comment }}</span>
@@ -396,6 +415,7 @@
                             <tr class="bg-gray-50 border-b border-gray-100">
                                 <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Código</th>
                                 <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Propiedad</th>
+                                <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Asesora</th>
                                 <th class="text-right py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Precio Anterior</th>
                                 <th class="text-right py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Precio Nuevo</th>
                                 <th class="text-right py-2 px-4 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Diferencia</th>
@@ -424,6 +444,14 @@
                                     <span class="text-gray-700 text-xs truncate block max-w-[180px]">
                                         {{ $item->listing->listing_title ?? '—' }}
                                     </span>
+                                </td>
+                                <td class="py-2 px-4 hidden sm:table-cell">
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-5 h-5 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                                            {{ strtoupper(substr($item->user->name ?? 'U', 0, 1)) }}
+                                        </div>
+                                        <span class="text-xs text-gray-600">{{ $item->user->name ?? '—' }}</span>
+                                    </div>
                                 </td>
                                 <td class="py-2 px-4 text-right text-xs text-gray-500">
                                     {{ $item->property_price_prev ? '$'.number_format($item->property_price_prev, 0, ',', '.') : '—' }}
@@ -540,6 +568,7 @@
                         <tr class="bg-gray-50 border-b border-gray-100">
                             <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Tipo</th>
                             <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Propiedad</th>
+                            <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Asesora</th>
                             <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Comentario</th>
                             <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase hidden md:table-cell">Fecha</th>
                         </tr>
@@ -553,7 +582,7 @@
                                 'status'    => ['class' => 'badge-status',     'label' => 'Estado',    'icon' => '🔄'],
                                 'available' => ['class' => 'badge-available',  'label' => 'Disponib.', 'icon' => '🏠'],
                             ];
-                            $badge      = $typeMap[$item->type] ?? ['class' => 'bg-gray-100 text-gray-600', 'label' => $item->type, 'icon' => ''];
+                            $badge = $typeMap[$item->type] ?? ['class' => 'bg-gray-100 text-gray-600', 'label' => $item->type, 'icon' => ''];
                         @endphp
                         <tr class="border-b border-gray-50 hover:bg-gray-50 transition text-xs">
                             <td class="py-3 px-4">
@@ -573,6 +602,14 @@
                                 @endif
                             </td>
                             <td class="py-3 px-4 hidden sm:table-cell">
+                                <div class="flex items-center gap-1.5">
+                                    <div class="w-5 h-5 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                                        {{ strtoupper(substr($item->user->name ?? 'U', 0, 1)) }}
+                                    </div>
+                                    <span class="text-xs text-gray-600">{{ $item->user->name ?? '—' }}</span>
+                                </div>
+                            </td>
+                            <td class="py-3 px-4 hidden sm:table-cell">
                                 <span class="text-gray-600 truncate block max-w-[250px]">{{ $item->comment }}</span>
                             </td>
                             <td class="py-3 px-4 hidden md:table-cell text-gray-400 whitespace-nowrap">
@@ -581,7 +618,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="py-10 text-center text-gray-400 text-sm">
+                            <td colspan="5" class="py-10 text-center text-gray-400 text-sm">
                                 No hay actividad en este período
                             </td>
                         </tr>
