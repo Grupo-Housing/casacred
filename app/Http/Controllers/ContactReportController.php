@@ -20,47 +20,105 @@ class ContactReportController extends Controller
 
         [$dateFrom, $dateTo] = $this->resolveDates($range, $from, $to);
 
-        // ── SECCIÓN 1: Resumen de actividad de Comments ─────────────────
-        $totalContacts = Comment::where('type', 'Contact')
-            ->whereBetween('created_at', [$dateFrom, $dateTo])
-            ->count();
+        // ── SECCIÓN 1: Propiedades únicas con actividad ─────────────────
 
-        $totalPriceChanges = Comment::where('type', 'price')
+        // Propiedades contactadas (unique por listing_id)
+        $totalContactedListings = Comment::where('type', 'Contact')
             ->whereBetween('created_at', [$dateFrom, $dateTo])
-            ->count();
+            ->distinct('listing_id')
+            ->count('listing_id');
 
-        $totalStatusChanges = Comment::whereIn('type', ['status', 'available'])
+        // Propiedades con cambio de precio (unique por listing_id)
+        $totalPriceListings = Comment::where('type', 'price')
             ->whereBetween('created_at', [$dateFrom, $dateTo])
-            ->count();
+            ->distinct('listing_id')
+            ->count('listing_id');
 
-        // Actividad por día (para gráfico)
+        // Propiedades desactivadas: status = 0
+        $totalStatusOff = Comment::where('type', 'status')
+            ->where('value', 0)
+            ->whereBetween('created_at', [$dateFrom, $dateTo])
+            ->distinct('listing_id')
+            ->count('listing_id');
+
+        // Propiedades marcadas como no disponibles: available = 2
+        $totalAvailableOff = Comment::where('type', 'available')
+            ->where('value', 2)
+            ->whereBetween('created_at', [$dateFrom, $dateTo])
+            ->distinct('listing_id')
+            ->count('listing_id');
+
+        // Total propiedades únicas con cualquier actividad
+        $totalUniqueListings = Comment::whereIn('type', ['Contact', 'price', 'status', 'available'])
+            ->whereBetween('created_at', [$dateFrom, $dateTo])
+            ->distinct('listing_id')
+            ->count('listing_id');
+
+        // ── Propiedades desactivadas (detalle) ──────────────────────────
+
+        // status = 0: desactivadas
+        $deactivatedListings = Comment::with('listing:id,product_code,listing_title')
+            ->where('type', 'status')
+            ->where('value', 0)
+            ->whereBetween('created_at', [$dateFrom, $dateTo])
+            ->select('listing_id', 'comment', 'created_at', 'user_id')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->unique('listing_id');
+
+        // available = 2: ya no disponibles
+        $unavailableListings = Comment::with('listing:id,product_code,listing_title')
+            ->where('type', 'available')
+            ->where('value', 2)
+            ->whereBetween('created_at', [$dateFrom, $dateTo])
+            ->select('listing_id', 'comment', 'created_at', 'user_id')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->unique('listing_id');
+
+        // ── Propiedades con cambio de precio (detalle) ──────────────────
+        $priceChangedListings = Comment::with('listing:id,product_code,listing_title')
+            ->where('type', 'price')
+            ->whereBetween('created_at', [$dateFrom, $dateTo])
+            ->select('listing_id', 'comment', 'property_price_prev', 'property_price', 'created_at', 'user_id')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->unique('listing_id');
+
+        // ── Actividad por día (para gráfico) ────────────────────────────
         $activityByDay = Comment::select(
             DB::raw('DATE(created_at) as day'),
-            DB::raw('COUNT(*) as total'),
-            DB::raw('SUM(CASE WHEN type = "Contact" THEN 1 ELSE 0 END) as contacts'),
-            DB::raw('SUM(CASE WHEN type = "price" THEN 1 ELSE 0 END) as prices'),
-            DB::raw('SUM(CASE WHEN type IN ("status","available") THEN 1 ELSE 0 END) as statuses')
+            DB::raw('COUNT(DISTINCT CASE WHEN type = "Contact" THEN listing_id END) as contacts'),
+            DB::raw('COUNT(DISTINCT CASE WHEN type = "price" THEN listing_id END) as prices'),
+            DB::raw('COUNT(DISTINCT CASE WHEN type IN ("status","available") THEN listing_id END) as statuses')
         )
+            ->whereIn('type', ['Contact', 'price', 'status', 'available'])
             ->whereBetween('created_at', [$dateFrom, $dateTo])
             ->groupBy('day')
             ->orderBy('day', 'asc')
-            ->get();
+            ->get()
+            ->map(function ($row) {
+                $row->total = $row->contacts + $row->prices + $row->statuses;
+                return $row;
+            });
 
-        // Actividad por asesora
+        // ── Actividad por asesora (propiedades únicas) ──────────────────
         $activityByUser = Comment::select(
             'user_id',
-            DB::raw('COUNT(*) as total'),
-            DB::raw('SUM(CASE WHEN type = "Contact" THEN 1 ELSE 0 END) as contacts'),
-            DB::raw('SUM(CASE WHEN type = "price" THEN 1 ELSE 0 END) as prices'),
-            DB::raw('SUM(CASE WHEN type IN ("status","available") THEN 1 ELSE 0 END) as statuses')
+            DB::raw('COUNT(DISTINCT CASE WHEN type = "Contact" THEN listing_id END) as contacts'),
+            DB::raw('COUNT(DISTINCT CASE WHEN type = "price" THEN listing_id END) as prices'),
+            DB::raw('COUNT(DISTINCT CASE WHEN type IN ("status","available") THEN listing_id END) as statuses'),
+            DB::raw('COUNT(DISTINCT listing_id) as total')
         )
+            ->whereIn('type', ['Contact', 'price', 'status', 'available'])
             ->whereBetween('created_at', [$dateFrom, $dateTo])
             ->groupBy('user_id')
             ->with('user:id,name')
             ->get();
 
-        // Últimas actualizaciones detalladas
+        // ── Últimas actualizaciones detalladas ──────────────────────────
         $recentActivity = Comment::with('listing:id,product_code,listing_title')
+            ->whereIn('type', ['Contact', 'price', 'status', 'available'])
             ->whereBetween('created_at', [$dateFrom, $dateTo])
             ->orderBy('created_at', 'desc')
             ->limit(50)
@@ -111,9 +169,14 @@ class ContactReportController extends Controller
             'range',
             'dateFrom',
             'dateTo',
-            'totalContacts',
-            'totalPriceChanges',
-            'totalStatusChanges',
+            'totalContactedListings',
+            'totalPriceListings',
+            'totalStatusOff',
+            'totalAvailableOff',
+            'totalUniqueListings',
+            'deactivatedListings',
+            'unavailableListings',
+            'priceChangedListings',
             'activityByDay',
             'activityByUser',
             'recentActivity',
@@ -133,6 +196,11 @@ class ContactReportController extends Controller
                     Carbon::today()->startOfDay(),
                     Carbon::today()->endOfDay(),
                 ];
+            case 'yesterday':
+                return [
+                    Carbon::yesterday()->startOfDay(),
+                    Carbon::yesterday()->endOfDay(),
+                ];
             case '15days':
                 return [
                     Carbon::now()->subDays(15)->startOfDay(),
@@ -144,9 +212,16 @@ class ContactReportController extends Controller
                     Carbon::now()->endOfDay(),
                 ];
             case 'custom':
+                if ($from && $to) {
+                    return [
+                        Carbon::parse($from)->startOfDay(),
+                        Carbon::parse($to)->endOfDay(),
+                    ];
+                }
+                // fallback a hoy si no vienen fechas
                 return [
-                    Carbon::parse($from)->startOfDay(),
-                    Carbon::parse($to)->endOfDay(),
+                    Carbon::today()->startOfDay(),
+                    Carbon::today()->endOfDay(),
                 ];
             default:
                 return [
