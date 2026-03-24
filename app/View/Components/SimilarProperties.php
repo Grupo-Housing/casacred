@@ -27,7 +27,6 @@ class SimilarProperties extends Component
             'address',
             'city',
             'state',
-            'country',
             'slug',
             'listingtype',
         )
