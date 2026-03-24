@@ -126,7 +126,7 @@
                     <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Desactivadas</span>
                     <span class="text-lg">🚫</span>
                 </div>
-                <p class="text-3xl font-bold text-red-600">{{ $totalStatusOff + $totalAvailableOff }}</p>
+                <p class="text-3xl font-bold text-red-600">{{ $totalDeactivated }}</p>
                 <p class="text-xs text-gray-400 mt-1">
                     {{ $totalStatusOff }} estado off · {{ $totalAvailableOff }} no disp.
                 </p>
@@ -134,12 +134,15 @@
 
             <div class="stat-card bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Total Propiedades</span>
-                    <span class="text-lg">🏠</span>
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Cola Completada</span>
+                    <span class="text-lg">✅</span>
                 </div>
-                <p class="text-3xl font-bold text-gray-900">{{ $totalUniqueListings }}</p>
-                <p class="text-xs text-gray-400 mt-1">propiedades distintas con cualquier actividad</p>
-                <p class="text-xs text-gray-300 mt-0.5">(contacto + precio + estado, sin repetir)</p>
+                <p class="text-3xl font-bold text-green-600">{{ $queueCompletionPct }}%</p>
+                <p class="text-xs text-gray-400 mt-1">{{ $queueDoneForCard }} de {{ $queueTotalForCard }} completadas</p>
+                {{-- mini barra de progreso --}}
+                <div class="mt-2 bg-gray-100 rounded-full h-1.5">
+                    <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ $queueCompletionPct }}%"></div>
+                </div>
             </div>
         </div>
 
@@ -266,129 +269,86 @@
             </div>
         </div>
 
-        {{-- ── PROPIEDADES DESACTIVADAS ────────────────────────────────── --}}
-        @if($deactivatedListings->count() > 0 || $unavailableListings->count() > 0)
+        {{-- ── PROPIEDADES DESACTIVADAS (UNIFICADO) ───────────────────── --}}
+        @if($deactivatedListings->count() > 0)
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
             <button type="button" onclick="toggleSection('deactivated')"
                 class="w-full flex items-center justify-between px-5 py-4 border-b border-gray-100 text-left">
                 <h3 class="text-sm font-bold text-gray-700 flex items-center gap-2">
                     <span>🚫</span> Propiedades Desactivadas / No Disponibles
                     <span class="ml-2 text-xs font-normal bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
-                        {{ $deactivatedListings->count() + $unavailableListings->count() }} propiedades
+                        {{ $deactivatedListings->count() }} {{ $deactivatedListings->count() == 1 ? 'propiedad' : 'propiedades' }}
                     </span>
                 </h3>
                 <span id="deactivated-icon" class="text-gray-400 text-xs">▲</span>
             </button>
 
             <div id="deactivated-body" class="collapsible-body expanded">
-                <div class="p-5">
-                    @if($deactivatedListings->count() > 0)
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                        🔴 Estado desactivado (status = 0) — {{ $deactivatedListings->count() }} propiedad(es)
-                    </p>
-                    <div class="overflow-x-auto mb-5">
-                        <table class="w-full text-sm">
-                            <thead>
-                                <tr class="bg-gray-50 border-b border-gray-100">
-                                    <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase">Código</th>
-                                    <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase">Propiedad</th>
-                                    <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Asesora</th>
-                                    <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Comentario</th>
-                                    <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase hidden md:table-cell">Fecha</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($deactivatedListings as $item)
-                                <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
-                                    <td class="py-2 px-3">
-                                        @if($item->listing)
-                                        <a href="{{ route('home.tw.edit', $item->listing) }}"
-                                           class="text-blue-600 hover:underline font-medium text-xs">
-                                            {{ $item->listing->product_code }}
-                                        </a>
-                                        @else
-                                        <span class="text-gray-400 text-xs">—</span>
-                                        @endif
-                                    </td>
-                                    <td class="py-2 px-3">
-                                        <span class="text-gray-700 text-xs truncate block max-w-[200px]">
-                                            {{ $item->listing->listing_title ?? '—' }}
-                                        </span>
-                                    </td>
-                                    <td class="py-2 px-3 hidden sm:table-cell">
-                                        <div class="flex items-center gap-1.5">
-                                            <div class="w-5 h-5 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
-                                                {{ strtoupper(substr($item->user->name ?? 'U', 0, 1)) }}
-                                            </div>
-                                            <span class="text-xs text-gray-600">{{ $item->user->name ?? '—' }}</span>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-100">
+                                <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Código</th>
+                                <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Propiedad</th>
+                                <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Asesora</th>
+                                <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Motivo(s)</th>
+                                <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase hidden md:table-cell">Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($deactivatedListings as $item)
+                            <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
+                                <td class="py-3 px-4 align-top">
+                                    @if($item->listing)
+                                    <a href="{{ route('home.tw.edit', $item->listing) }}"
+                                       class="text-blue-600 hover:underline font-medium text-xs">
+                                        {{ $item->listing->product_code }}
+                                    </a>
+                                    @else
+                                    <span class="text-gray-400 text-xs">—</span>
+                                    @endif
+                                </td>
+                                <td class="py-3 px-4 align-top">
+                                    <span class="text-gray-700 text-xs truncate block max-w-[180px]">
+                                        {{ $item->listing->listing_title ?? '—' }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4 align-top hidden sm:table-cell">
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-5 h-5 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                                            {{ strtoupper(substr($item->user->name ?? 'U', 0, 1)) }}
                                         </div>
-                                    </td>
-                                    <td class="py-2 px-3 hidden sm:table-cell">
-                                        <span class="text-gray-500 text-xs truncate block max-w-[250px]">{{ $item->comment }}</span>
-                                    </td>
-                                    <td class="py-2 px-3 hidden md:table-cell text-gray-400 text-xs whitespace-nowrap">
-                                        {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y H:i') }}
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    @endif
-
-                    @if($unavailableListings->count() > 0)
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                        🟣 No disponible (available = 2) — {{ $unavailableListings->count() }} propiedad(es)
-                    </p>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead>
-                                <tr class="bg-gray-50 border-b border-gray-100">
-                                    <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase">Código</th>
-                                    <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase">Propiedad</th>
-                                    <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Asesora</th>
-                                    <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Comentario</th>
-                                    <th class="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase hidden md:table-cell">Fecha</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($unavailableListings as $item)
-                                <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
-                                    <td class="py-2 px-3">
-                                        @if($item->listing)
-                                        <a href="{{ route('home.tw.edit', $item->listing) }}"
-                                           class="text-blue-600 hover:underline font-medium text-xs">
-                                            {{ $item->listing->product_code }}
-                                        </a>
-                                        @else
-                                        <span class="text-gray-400 text-xs">—</span>
-                                        @endif
-                                    </td>
-                                    <td class="py-2 px-3">
-                                        <span class="text-gray-700 text-xs truncate block max-w-[200px]">
-                                            {{ $item->listing->listing_title ?? '—' }}
-                                        </span>
-                                    </td>
-                                    <td class="py-2 px-3 hidden sm:table-cell">
-                                        <div class="flex items-center gap-1.5">
-                                            <div class="w-5 h-5 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
-                                                {{ strtoupper(substr($item->user->name ?? 'U', 0, 1)) }}
-                                            </div>
-                                            <span class="text-xs text-gray-600">{{ $item->user->name ?? '—' }}</span>
+                                        <span class="text-xs text-gray-600">{{ $item->user->name ?? '—' }}</span>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4 align-top">
+                                    <div class="space-y-1.5">
+                                        {{-- Badge + comentario por cada tipo de desactivación --}}
+                                        @if(isset($item->comments['status']))
+                                        <div class="flex items-start gap-2">
+                                            <span class="inline-flex items-center gap-1 badge-status text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">
+                                                🔄 Estado off
+                                            </span>
+                                            <span class="text-xs text-gray-500 truncate max-w-[260px]">{{ $item->comments['status'] }}</span>
                                         </div>
-                                    </td>
-                                    <td class="py-2 px-3 hidden sm:table-cell">
-                                        <span class="text-gray-500 text-xs truncate block max-w-[250px]">{{ $item->comment }}</span>
-                                    </td>
-                                    <td class="py-2 px-3 hidden md:table-cell text-gray-400 text-xs whitespace-nowrap">
-                                        {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y H:i') }}
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    @endif
+                                        @endif
+                                        @if(isset($item->comments['available']))
+                                        <div class="flex items-start gap-2">
+                                            <span class="inline-flex items-center gap-1 badge-available text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">
+                                                🏠 No disp.
+                                            </span>
+                                            <span class="text-xs text-gray-500 truncate max-w-[260px]">{{ $item->comments['available'] }}</span>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4 align-top hidden md:table-cell text-gray-400 text-xs whitespace-nowrap">
+                                    {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y H:i') }}
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

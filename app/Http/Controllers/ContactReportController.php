@@ -48,33 +48,60 @@ class ContactReportController extends Controller
             ->distinct('listing_id')
             ->count('listing_id');
 
-        // Total propiedades únicas con cualquier actividad
-        $totalUniqueListings = Comment::whereIn('type', ['Contact', 'price', 'status', 'available'])
+        // Total propiedades desactivadas únicas (unión de ambos tipos, sin duplicar)
+        $totalDeactivated = Comment::whereIn('type', ['status', 'available'])
+            ->where(function ($q) {
+                $q->where(function ($q2) {
+                    $q2->where('type', 'status')->where('value', 0);
+                })->orWhere(function ($q2) {
+                    $q2->where('type', 'available')->where('value', 2);
+                });
+            })
             ->whereBetween('created_at', [$dateFrom, $dateTo])
             ->distinct('listing_id')
             ->count('listing_id');
 
-        // ── Propiedades desactivadas (detalle) ──────────────────────────
+        // ── Porcentaje de completado de la cola (para tarjeta 4) ────────
+        $queueTotalForCard  = ContactQueue::count();
+        $queueDoneForCard   = ContactQueue::where('status', 'done')->count();
+        $queueCompletionPct = $queueTotalForCard > 0
+            ? round(($queueDoneForCard / $queueTotalForCard) * 100)
+            : 0;
 
-        // status = 0: desactivadas
-        $deactivatedListings = Comment::with(['listing:id,product_code,listing_title', 'user:id,name'])
-            ->where('type', 'status')
-            ->where('value', 0)
+        // ── Propiedades desactivadas UNIFICADAS (detalle) ───────────────
+        // Traer todos los registros de desactivación (status=0 y available=2)
+        $allDeactivationComments = Comment::with(['listing:id,product_code,listing_title', 'user:id,name'])
+            ->where(function ($q) {
+                $q->where(function ($q2) {
+                    $q2->where('type', 'status')->where('value', 0);
+                })->orWhere(function ($q2) {
+                    $q2->where('type', 'available')->where('value', 2);
+                });
+            })
             ->whereBetween('created_at', [$dateFrom, $dateTo])
-            ->select('listing_id', 'comment', 'created_at', 'user_id')
+            ->select('listing_id', 'type', 'value', 'comment', 'created_at', 'user_id')
             ->orderBy('created_at', 'desc')
-            ->get()
-            ->unique('listing_id');
+            ->get();
 
-        // available = 2: ya no disponibles
-        $unavailableListings = Comment::with(['listing:id,product_code,listing_title', 'user:id,name'])
-            ->where('type', 'available')
-            ->where('value', 2)
-            ->whereBetween('created_at', [$dateFrom, $dateTo])
-            ->select('listing_id', 'comment', 'created_at', 'user_id')
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->unique('listing_id');
+        // Agrupar por listing_id: cada propiedad tendrá sus motivos unidos
+        $deactivatedListings = $allDeactivationComments
+            ->groupBy('listing_id')
+            ->map(function ($rows) {
+                $first = $rows->first();
+                return (object) [
+                    'listing_id'  => $first->listing_id,
+                    'listing'     => $first->listing,
+                    'user'        => $first->user,
+                    'created_at'  => $first->created_at,
+                    // Tipos que tuvo: ['status', 'available'] o solo uno
+                    'types'       => $rows->pluck('type')->unique()->values(),
+                    // Comentario más reciente de cada tipo
+                    'comments'    => $rows->mapWithKeys(function ($r) {
+                        return [$r->type => $r->comment];
+                    }),
+                ];
+            })
+            ->values();
 
         // ── Propiedades con cambio de precio (detalle) ──────────────────
         $priceChangedListings = Comment::with(['listing:id,product_code,listing_title', 'user:id,name'])
@@ -173,9 +200,11 @@ class ContactReportController extends Controller
             'totalPriceListings',
             'totalStatusOff',
             'totalAvailableOff',
-            'totalUniqueListings',
+            'totalDeactivated',
+            'queueCompletionPct',
+            'queueDoneForCard',
+            'queueTotalForCard',
             'deactivatedListings',
-            'unavailableListings',
             'priceChangedListings',
             'activityByDay',
             'activityByUser',
