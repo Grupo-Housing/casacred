@@ -15,10 +15,10 @@ class Listing extends Model
         'product_code',
         'slug',
         'images',
-        'video', //nueva variable video
+        'video',
         'bedroom',
         'bathroom',
-        'garage', //new variables to filters
+        'garage',
         'meta_description',
         'keywords',
         'Front',
@@ -35,29 +35,27 @@ class Listing extends Model
         'state',
         'city',
         'listingtype',
-        'sector', // nueva variable para select dinamico
+        'sector',
         'listingcharacteristic',
         'listinglistservices',
         'listingtypestatus',
         'listingtagstatus',
         'listinggeneralcharacteristics',
         'listingenvironments',
-        'listyears', //se agrego esta nueva variable
+        'listyears',
         'lat',
-        'lng', //nuevas variables se quito lat y lng como variables
-        //'ubication_url', //se agrego esto para la ubicacion
+        'lng',
         'cardinal_zone',
         'available',
         'status',
         'user_id',
-        'threedegreeview',
         'heading_details',
         'owner_name',
         'owner_email',
         'owner_address',
         'identification',
-        'phone_number', // new variables to save cedula and numero telefonico
-        'aval', //new variable to avaluo
+        'phone_number',
+        'aval',
         'locked',
         'vip',
         'planing_license',
@@ -72,7 +70,7 @@ class Listing extends Model
         'plusvalia',
         'niv_constr',
         'num_pisos',
-        'pisos_constr', // nuevas variables para las caracteristicas generales
+        'pisos_constr',
         'land_appraisal',
         'construction_appraisal',
         'delete_at',
