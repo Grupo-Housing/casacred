@@ -138,8 +138,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:sanctum', 'verified']]
     Route::post('storing-property', [ListingController::class, 'storing_property'])->name('admin.storing.property');
     Route::post('/listings/create_code', [ListingController::class, 'create_code'])->name('admin.listings.create_code');
     Route::post('unlocked/{id}', [ListingController::class, 'unlocked'])->name('admin.listings.unlocked');
-    //Route::post('delete/{listing_id}', [ListingController::class, 'delete'])->name('admin.listings.delete');    
-    Route::post('posted-on-facebook/{listing_id}', [ListingController::class, 'postedfacebook'])->name('admin.listing.posted.facebook');
+    //Route::post('delete/{listing_id}', [ListingController::class, 'delete'])->name('admin.listings.delete');
     Route::get('reslug/{listing}', [ListingController::class, 'reslug'])->name('admin.reslug');
     Route::get('seo', [ListingController::class, 'seo'])->name('admin.seo');
     Route::get('/show-listing/{listing}', [ListingController::class, 'show_listing'])->name('admin.show.listing');

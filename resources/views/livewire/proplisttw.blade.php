@@ -245,12 +245,6 @@
                             <img width="12" height="12" src="{{asset('img/plusvalia.png')}}" alt="">
                         </div>
                         @endif
-                        @if(Auth::user()->email == "marketing@casacredito.com" || Auth::user()->email == "developer2@casacredito.com")
-                            <form action="{{ route('admin.listing.posted.facebook', $propertie->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="@if($propertie->posted_on_facebook) bg-blue-500 @else bg-gray-500 @endif text-white px-2 rounded shadow ml-2">f</button>
-                            </form>
-                        @endif
                         <div class="ml-2">
                             <input type="checkbox" value="{{$propertie->listing_title.'|'.$propertie->slug}}" name="propertiestoshare[]" class="checktoshare" onclick="share()">
                         </div>

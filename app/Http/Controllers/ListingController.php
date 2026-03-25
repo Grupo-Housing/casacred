@@ -1104,15 +1104,6 @@ class ListingController extends Controller
         return $mobile;
     }
 
-    public function postedfacebook($listing_id)
-    {
-        $listing = Listing::where('id', $listing_id)->first();
-        $listing->posted_on_facebook = !$listing->posted_on_facebook;
-        $listing->date_posted_facebook != null ? null : $listing->date_posted_facebook = date(now());
-        $listing->save();
-
-        return redirect()->back();
-    }
 
     public function updateContactDate(Request $request)
     {
