@@ -69,8 +69,10 @@ class ContactReportController extends Controller
             : 0;
 
         // ── Propiedades desactivadas UNIFICADAS (detalle) ───────────────
-        // Traer todos los registros de desactivación (status=0 y available=2)
-        $allDeactivationComments = Comment::with(['listing:id,product_code,listing_title', 'user:id,name'])
+        $allDeactivationComments = Comment::with([
+            'listing:id,product_code,listing_title,status,available',
+            'user:id,name'
+        ])
             ->where(function ($q) {
                 $q->where(function ($q2) {
                     $q2->where('type', 'status')->where('value', 0);
@@ -83,22 +85,39 @@ class ContactReportController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Agrupar por listing_id: cada propiedad tendrá sus motivos unidos
+        // Agrupar por listing_id con estado real actual de la propiedad
         $deactivatedListings = $allDeactivationComments
             ->groupBy('listing_id')
             ->map(function ($rows) {
-                $first = $rows->first();
+                $first   = $rows->first();
+                $listing = $first->listing;
+
+                $currentStatus    = $listing ? (int) $listing->status    : null;
+                $currentAvailable = $listing ? (int) $listing->available : null;
+
+                // Etiqueta de estado actual (compatible PHP 7, sin match)
+                if ($currentAvailable === 2 && $currentStatus === 0) {
+                    $currentState = 'baja';
+                } elseif ($currentAvailable === 2) {
+                    $currentState = 'no_disponible';
+                } elseif ($currentStatus === 0) {
+                    $currentState = 'off';
+                } else {
+                    $currentState = 'activa';
+                }
+
                 return (object) [
-                    'listing_id'  => $first->listing_id,
-                    'listing'     => $first->listing,
-                    'user'        => $first->user,
-                    'created_at'  => $first->created_at,
-                    // Tipos que tuvo: ['status', 'available'] o solo uno
-                    'types'       => $rows->pluck('type')->unique()->values(),
-                    // Comentario más reciente de cada tipo
-                    'comments'    => $rows->mapWithKeys(function ($r) {
+                    'listing_id'        => $first->listing_id,
+                    'listing'           => $listing,
+                    'user'              => $first->user,
+                    'created_at'        => $first->created_at,
+                    'types'             => $rows->pluck('type')->unique()->values(),
+                    'comments'          => $rows->mapWithKeys(function ($r) {
                         return [$r->type => $r->comment];
                     }),
+                    'current_status'    => $currentStatus,
+                    'current_available' => $currentAvailable,
+                    'current_state'     => $currentState,
                 ];
             })
             ->values();
@@ -160,18 +179,18 @@ class ContactReportController extends Controller
         )
             ->first();
 
-        // Contactos registrados HOY por asesora (desde comments, igual que el resto del reporte)
+        // Contactos registrados en el RANGO ACTIVO por asesora
         $contactedToday = Comment::select(
             'user_id',
             DB::raw('COUNT(DISTINCT listing_id) as contactadas_hoy')
         )
             ->where('type', 'Contact')
-            ->whereDate('created_at', Carbon::today())
+            ->whereBetween('created_at', [$dateFrom, $dateTo])
             ->groupBy('user_id')
             ->with('user:id,name')
             ->get();
 
-        // Completadas en la cola HOY por asesora (para referencia de la cola)
+        // Completadas en la cola HOY por asesora
         $queueDoneToday = ContactQueue::select(
             'user_id',
             DB::raw('COUNT(*) as completadas_hoy')
@@ -259,7 +278,6 @@ class ContactReportController extends Controller
                         Carbon::parse($to)->endOfDay(),
                     ];
                 }
-                // fallback a hoy si no vienen fechas
                 return [
                     Carbon::today()->startOfDay(),
                     Carbon::today()->endOfDay(),

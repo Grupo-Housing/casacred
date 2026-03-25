@@ -22,12 +22,13 @@
         overflow: hidden;
     }
     .collapsible-body.collapsed {
-        max-height: 0;
+        max-height: 0 !important;
         opacity: 0;
     }
     .collapsible-body.expanded {
-        max-height: 2000px;
+        max-height: 600px;
         opacity: 1;
+        overflow: visible;
     }
     @media (max-width: 768px) {
         .grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; }
@@ -61,7 +62,6 @@
             <form method="GET" action="{{ route('admin.contact.report') }}"
                   class="flex flex-wrap items-end gap-2" id="filterForm">
 
-                {{-- Campo oculto que guarda el range activo al hacer submit --}}
                 <input type="hidden" name="range" id="rangeInput" value="{{ $range }}">
 
                 <div class="flex rounded-lg border border-gray-300 overflow-hidden bg-white text-sm">
@@ -73,7 +73,6 @@
                         {{ $label }}
                     </button>
                     @endforeach
-                    {{-- Personalizado: solo muestra el panel, NO hace submit --}}
                     <button type="button" onclick="showCustom()"
                         class="px-3 py-2 font-medium transition range-btn
                             {{ $range === 'custom' ? 'bg-gray-800 text-white' : 'text-gray-600 hover:bg-gray-100' }}"
@@ -82,7 +81,6 @@
                     </button>
                 </div>
 
-                {{-- Fechas personalizadas: solo visible con "Personalizado" --}}
                 <div id="customDates" class="{{ $range === 'custom' ? 'flex' : 'hidden' }} gap-2 items-center flex-wrap">
                     <input type="date" name="from" id="fromInput"
                         value="{{ $range === 'custom' && request('from') ? request('from') : now()->subDays(7)->format('Y-m-d') }}"
@@ -91,7 +89,6 @@
                     <input type="date" name="to" id="toInput"
                         value="{{ $range === 'custom' && request('to') ? request('to') : now()->format('Y-m-d') }}"
                         class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400">
-                    {{-- Solo este botón hace submit con range=custom --}}
                     <button type="submit" onclick="document.getElementById('rangeInput').value='custom'"
                         class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-700">
                         Aplicar
@@ -100,7 +97,7 @@
             </form>
         </div>
 
-        {{-- ── TARJETAS DE RESUMEN (propiedades únicas) ───────────────── --}}
+        {{-- ── TARJETAS DE RESUMEN ─────────────────────────────────────── --}}
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
 
             <div class="stat-card bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
@@ -139,7 +136,6 @@
                 </div>
                 <p class="text-3xl font-bold text-green-600">{{ $queueCompletionPct }}%</p>
                 <p class="text-xs text-gray-400 mt-1">{{ $queueDoneForCard }} de {{ $queueTotalForCard }} completadas</p>
-                {{-- mini barra de progreso --}}
                 <div class="mt-2 bg-gray-100 rounded-full h-1.5">
                     <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ $queueCompletionPct }}%"></div>
                 </div>
@@ -157,7 +153,6 @@
                 @php $total = $queueStats->total ?: 1; @endphp
 
                 <div class="space-y-3">
-                    {{-- Pendientes --}}
                     <div>
                         <div class="flex justify-between text-xs mb-1">
                             <span class="text-gray-500 font-medium">Pendientes</span>
@@ -168,7 +163,6 @@
                                  style="width: {{ round((($queueStats->pending ?? 0) / $total) * 100) }}%"></div>
                         </div>
                     </div>
-                    {{-- Completadas --}}
                     <div>
                         <div class="flex justify-between text-xs mb-1">
                             <span class="text-gray-500 font-medium">Completadas</span>
@@ -179,7 +173,6 @@
                                  style="width: {{ round((($queueStats->done ?? 0) / $total) * 100) }}%"></div>
                         </div>
                     </div>
-                    {{-- Saltadas --}}
                     <div>
                         <div class="flex justify-between text-xs mb-1">
                             <span class="text-gray-500 font-medium">Saltadas</span>
@@ -190,7 +183,6 @@
                                  style="width: {{ round((($queueStats->skipped ?? 0) / $total) * 100) }}%"></div>
                         </div>
                     </div>
-                    {{-- Faltan por completar (pending) --}}
                     <div class="mt-4 pt-3 border-t text-xs text-gray-500">
                         Faltan por completar:
                         <span class="font-bold text-yellow-600 text-sm ml-1">{{ $queueStats->pending ?? 0 }}</span>
@@ -211,16 +203,37 @@
                 </div>
             </div>
 
-            {{-- Contactadas hoy por asesora (desde comments, consistente con el resto) --}}
+            {{-- Contactadas en el período por asesora --}}
             <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                @php
+                    switch($range) {
+                        case 'today':
+                            $periodLabel = 'Hoy';
+                            break;
+                        case 'yesterday':
+                            $periodLabel = 'Ayer';
+                            break;
+                        case '15days':
+                            $periodLabel = 'Últimos 15 días';
+                            break;
+                        case '30days':
+                            $periodLabel = 'Últimos 30 días';
+                            break;
+                        case 'custom':
+                            $periodLabel = \Carbon\Carbon::parse($dateFrom)->format('d M').' - '.\Carbon\Carbon::parse($dateTo)->format('d M');
+                            break;
+                        default:
+                            $periodLabel = 'Hoy';
+                    }
+                @endphp
                 <h3 class="text-sm font-bold text-gray-700 mb-1 flex items-center gap-2">
-                    <span>📞</span> Contactadas Hoy
+                    <span>📞</span> Contactadas — {{ $periodLabel }}
                 </h3>
-                <p class="text-xs text-gray-400 mb-4">propiedades únicas contactadas hoy</p>
+                <p class="text-xs text-gray-400 mb-4">propiedades únicas contactadas en el período</p>
                 @if($contactedToday->isEmpty())
                     <div class="flex flex-col items-center justify-center h-24 text-gray-400">
                         <span class="text-2xl mb-1">😴</span>
-                        <p class="text-xs">Ninguna contactada hoy</p>
+                        <p class="text-xs">Ninguna contactada en este período</p>
                     </div>
                 @else
                     <div class="space-y-3">
@@ -238,9 +251,8 @@
                         </div>
                         @endforeach
                     </div>
-                    {{-- Total del día --}}
                     <div class="mt-4 pt-3 border-t flex justify-between text-xs text-gray-500">
-                        <span>Total hoy</span>
+                        <span>Total período</span>
                         <span class="font-bold text-gray-800">{{ $contactedToday->sum('contactadas_hoy') }} props.</span>
                     </div>
                 @endif
@@ -290,19 +302,39 @@
             </button>
 
             <div id="deactivated-body" class="collapsible-body expanded">
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto overflow-y-auto" style="max-height: 520px;">
                     <table class="w-full text-sm">
-                        <thead>
+                        <thead class="sticky top-0 z-10">
                             <tr class="bg-gray-50 border-b border-gray-100">
                                 <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Código</th>
                                 <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Propiedad</th>
                                 <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase hidden sm:table-cell">Asesora</th>
-                                <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Motivo(s)</th>
+                                <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Estado actual</th>
+                                <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase">Comentario(s)</th>
                                 <th class="text-left py-2 px-4 text-xs font-semibold text-gray-500 uppercase hidden md:table-cell">Fecha</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($deactivatedListings as $item)
+                            @php
+                                // Compatible PHP 7: switch en lugar de match
+                                switch($item->current_state) {
+                                    case 'baja':
+                                        $stateConfig = ['bg' => 'bg-red-100', 'text' => 'text-red-700', 'icon' => '❌', 'label' => 'Dada de baja', 'desc' => 'Off + No disponible'];
+                                        break;
+                                    case 'no_disponible':
+                                        $stateConfig = ['bg' => 'bg-pink-100', 'text' => 'text-pink-700', 'icon' => '🚫', 'label' => 'No disponible', 'desc' => 'On, pero sin disponibilidad'];
+                                        break;
+                                    case 'off':
+                                        $stateConfig = ['bg' => 'bg-orange-100', 'text' => 'text-orange-700', 'icon' => '🔕', 'label' => 'Desactivada (off)', 'desc' => 'No visible en portal, sigue disponible'];
+                                        break;
+                                    case 'activa':
+                                        $stateConfig = ['bg' => 'bg-green-100', 'text' => 'text-green-700', 'icon' => '✅', 'label' => 'Reactivada', 'desc' => 'Ya está activa y disponible'];
+                                        break;
+                                    default:
+                                        $stateConfig = ['bg' => 'bg-gray-100', 'text' => 'text-gray-600', 'icon' => '❓', 'label' => 'Desconocido', 'desc' => ''];
+                                }
+                            @endphp
                             <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
                                 <td class="py-3 px-4 align-top">
                                     @if($item->listing)
@@ -315,7 +347,7 @@
                                     @endif
                                 </td>
                                 <td class="py-3 px-4 align-top">
-                                    <span class="text-gray-700 text-xs truncate block max-w-[180px]">
+                                    <span class="text-gray-700 text-xs block" style="max-width:180px">
                                         {{ $item->listing->listing_title ?? '—' }}
                                     </span>
                                 </td>
@@ -324,26 +356,29 @@
                                         <div class="w-5 h-5 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
                                             {{ strtoupper(substr($item->user->name ?? 'U', 0, 1)) }}
                                         </div>
-                                        <span class="text-xs text-gray-600">{{ $item->user->name ?? '—' }}</span>
+                                        <span class="text-xs text-gray-600 whitespace-nowrap">{{ $item->user->name ?? '—' }}</span>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4 align-top">
+                                    <div class="inline-flex flex-col gap-0.5">
+                                        <span class="inline-flex items-center gap-1 {{ $stateConfig['bg'] }} {{ $stateConfig['text'] }} text-xs font-bold px-2 py-1 rounded-lg whitespace-nowrap">
+                                            {{ $stateConfig['icon'] }} {{ $stateConfig['label'] }}
+                                        </span>
+                                        <span class="text-xs text-gray-400 pl-1">{{ $stateConfig['desc'] }}</span>
                                     </div>
                                 </td>
                                 <td class="py-3 px-4 align-top">
                                     <div class="space-y-1.5">
-                                        {{-- Badge + comentario por cada tipo de desactivación --}}
                                         @if(isset($item->comments['status']))
-                                        <div class="flex items-start gap-2">
-                                            <span class="inline-flex items-center gap-1 badge-status text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">
-                                                🔄 Estado off
-                                            </span>
-                                            <span class="text-xs text-gray-500 truncate max-w-[260px]">{{ $item->comments['status'] }}</span>
+                                        <div class="flex items-start gap-1.5">
+                                            <span class="badge-status text-xs font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">off</span>
+                                            <span class="text-xs text-gray-500">{{ $item->comments['status'] }}</span>
                                         </div>
                                         @endif
                                         @if(isset($item->comments['available']))
-                                        <div class="flex items-start gap-2">
-                                            <span class="inline-flex items-center gap-1 badge-available text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">
-                                                🏠 No disp.
-                                            </span>
-                                            <span class="text-xs text-gray-500 truncate max-w-[260px]">{{ $item->comments['available'] }}</span>
+                                        <div class="flex items-start gap-1.5">
+                                            <span class="badge-available text-xs font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">n/d</span>
+                                            <span class="text-xs text-gray-500">{{ $item->comments['available'] }}</span>
                                         </div>
                                         @endif
                                     </div>
@@ -548,7 +583,7 @@
                                 'status'    => ['class' => 'badge-status',     'label' => 'Estado',    'icon' => '🔄'],
                                 'available' => ['class' => 'badge-available',  'label' => 'Disponib.', 'icon' => '🏠'],
                             ];
-                            $badge = $typeMap[$item->type] ?? ['class' => 'bg-gray-100 text-gray-600', 'label' => $item->type, 'icon' => ''];
+                            $badge = isset($typeMap[$item->type]) ? $typeMap[$item->type] : ['class' => 'bg-gray-100 text-gray-600', 'label' => $item->type, 'icon' => ''];
                         @endphp
                         <tr class="border-b border-gray-50 hover:bg-gray-50 transition text-xs">
                             <td class="py-3 px-4">
@@ -600,29 +635,23 @@
 
 @section('endscript')
 <script>
-    // Aplica un rango simple (hoy, ayer, 15days, 30days): hace submit inmediato
     function applyRange(val) {
         document.getElementById('rangeInput').value = val;
-        // Ocultar panel de fechas personalizadas para que no envíe from/to vacíos
         document.getElementById('customDates').classList.add('hidden');
         document.getElementById('customDates').classList.remove('flex');
-        // Resaltar botón activo visualmente
         updateActiveBtn(val);
         document.getElementById('filterForm').submit();
     }
 
-    // Muestra el panel de fechas sin hacer submit
     function showCustom() {
         document.getElementById('customDates').classList.remove('hidden');
         document.getElementById('customDates').classList.add('flex');
         updateActiveBtn('custom');
-        // NO se llama a submit aquí — el usuario debe hacer click en "Aplicar"
     }
 
-    // Actualiza el estilo del botón activo en la barra
     function updateActiveBtn(val) {
-        document.querySelectorAll('.range-btn').forEach(btn => {
-            const isActive = btn.dataset.value === val;
+        document.querySelectorAll('.range-btn').forEach(function(btn) {
+            var isActive = btn.dataset.value === val;
             btn.classList.toggle('bg-gray-800', isActive);
             btn.classList.toggle('text-white', isActive);
             btn.classList.toggle('text-gray-600', !isActive);
@@ -630,10 +659,9 @@
         });
     }
 
-    // Toggle secciones colapsables
     function toggleSection(id) {
-        const body = document.getElementById(id + '-body');
-        const icon = document.getElementById(id + '-icon');
+        var body = document.getElementById(id + '-body');
+        var icon = document.getElementById(id + '-icon');
         if (body.classList.contains('expanded')) {
             body.classList.remove('expanded');
             body.classList.add('collapsed');
