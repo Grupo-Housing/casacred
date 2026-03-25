@@ -568,9 +568,83 @@ class WebController extends Controller
 
     public function seo()
     {
-        $seo_pages = SeoPage::all();
-        $listings = Listing::where('status', 1)->latest()->get();
-        return view('seo', compact('listings', 'seo_pages'));
+        $typeSlugMap = [
+            23 => 'casas',
+            24 => 'departamentos',
+            25 => 'casas-comerciales',
+            26 => 'terrenos',
+            29 => 'quintas',
+            30 => 'haciendas',
+            32 => 'locales-comerciales',
+            35 => 'oficinas',
+            36 => 'suites',
+            37 => 'edificios',
+            38 => 'coloniales',
+            39 => 'hoteles',
+            40 => 'fabricas',
+            41 => 'en-proyecto',
+            42 => 'parqueaderos',
+            43 => 'bodegas',
+            44 => 'naves-industriales',
+            45 => 'hostales',
+            46 => 'penthouses',
+        ];
+
+        $statusSlugMap = [
+            'venta'     => 'venta',
+            'renta'     => 'renta',
+            'general'   => 'general',
+            'proyectos' => 'proyectos',
+        ];
+
+        // Combinaciones reales que existen en la BD (solo activas y disponibles)
+        $combinations = Listing::where('status', 1)
+            ->where('available', 1)
+            ->whereNotNull('listingtype')
+            ->whereNotNull('listingtypestatus')
+            ->select('listingtype', 'listingtypestatus', 'city')
+            ->distinct()
+            ->get();
+
+        $categoryUrls = [];
+        foreach ($combinations as $combo) {
+            $typeId     = (int) $combo->listingtype;
+            $typeSlug   = $typeSlugMap[$typeId] ?? null;
+            $statusSlug = $statusSlugMap[$combo->listingtypestatus] ?? null;
+
+            if (!$typeSlug || !$statusSlug) continue;
+
+            $citySlug = $combo->city ? \Illuminate\Support\Str::slug($combo->city) : null;
+
+            $url = $citySlug
+                ? url("/{$typeSlug}-en-{$statusSlug}-en-{$citySlug}")
+                : url("/{$typeSlug}-en-{$statusSlug}");
+
+            $categoryUrls[] = [
+                'url'       => $url,
+                'type_id'   => $typeId,
+                'type_slug' => $typeSlug,
+                'status'    => $combo->listingtypestatus,
+                'city'      => $combo->city,
+                'label'     => ucfirst(str_replace('-', ' ', $typeSlug))
+                    . ' en ' . ucfirst($statusSlug)
+                    . ($combo->city ? ' en ' . $combo->city : ''),
+            ];
+        }
+
+        // Ordenar por tipo luego ciudad
+        usort($categoryUrls, function ($a, $b) {
+            $t = strcmp($a['type_slug'], $b['type_slug']);
+            return $t !== 0 ? $t : strcmp($a['city'] ?? '', $b['city'] ?? '');
+        });
+
+        // Propiedades individuales (solo para la seccion de slugs)
+        $listings = Listing::where('status', 1)
+            ->where('available', 1)
+            ->orderBy('product_code')
+            ->get(['id', 'product_code', 'listing_title', 'slug', 'address']);
+
+        return view('seo', compact('listings', 'categoryUrls'));
     }
 
 
