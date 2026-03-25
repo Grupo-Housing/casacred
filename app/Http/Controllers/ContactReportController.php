@@ -160,7 +160,18 @@ class ContactReportController extends Controller
         )
             ->first();
 
-        // Completadas HOY por asesora
+        // Contactos registrados HOY por asesora (desde comments, igual que el resto del reporte)
+        $contactedToday = Comment::select(
+            'user_id',
+            DB::raw('COUNT(DISTINCT listing_id) as contactadas_hoy')
+        )
+            ->where('type', 'Contact')
+            ->whereDate('created_at', Carbon::today())
+            ->groupBy('user_id')
+            ->with('user:id,name')
+            ->get();
+
+        // Completadas en la cola HOY por asesora (para referencia de la cola)
         $queueDoneToday = ContactQueue::select(
             'user_id',
             DB::raw('COUNT(*) as completadas_hoy')
@@ -210,6 +221,7 @@ class ContactReportController extends Controller
             'activityByUser',
             'recentActivity',
             'queueStats',
+            'contactedToday',
             'queueDoneToday',
             'queuePendingByUser',
             'neverContacted',

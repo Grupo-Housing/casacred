@@ -92,7 +92,7 @@
                     <button 
                         onclick="document.getElementById('contact-queue-panel').style.display='block'; document.getElementById('contact-queue-panel').__x.$data.panelVisible = true"
                         class="flex items-center w-full px-4 text-sm text-white hover:bg-gray-700 hover:bg-opacity-25 hover:text-white">
-                        <span class="mx-3 py-4">📞 Cola de Contacto</span>
+                        <span class="mx-3 py-4">Cola de Contacto</span>
                     </button>
                 @endif
 
@@ -121,7 +121,7 @@
                     class="flex items-center px-4 text-sm text-white
                     @if(Request::is('admin/contact-report*')) border-l-4 border-white bg-gray-900 @endif
                     hover:bg-gray-700 hover:bg-opacity-25 hover:text-white">
-                        <span class="mx-3 py-4">📊 Reporte Contactos</span>
+                        <span class="mx-3 py-4">Reporte Contactos</span>
                 </a>
                 
             @endif

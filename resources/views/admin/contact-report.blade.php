@@ -211,19 +211,20 @@
                 </div>
             </div>
 
-            {{-- Completadas hoy por asesora --}}
+            {{-- Contactadas hoy por asesora (desde comments, consistente con el resto) --}}
             <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-                <h3 class="text-sm font-bold text-gray-700 mb-4 flex items-center gap-2">
-                    <span>✅</span> Completadas Hoy
+                <h3 class="text-sm font-bold text-gray-700 mb-1 flex items-center gap-2">
+                    <span>📞</span> Contactadas Hoy
                 </h3>
-                @if($queueDoneToday->isEmpty())
+                <p class="text-xs text-gray-400 mb-4">propiedades únicas contactadas hoy</p>
+                @if($contactedToday->isEmpty())
                     <div class="flex flex-col items-center justify-center h-24 text-gray-400">
                         <span class="text-2xl mb-1">😴</span>
-                        <p class="text-xs">Ninguna completada hoy</p>
+                        <p class="text-xs">Ninguna contactada hoy</p>
                     </div>
                 @else
                     <div class="space-y-3">
-                        @foreach($queueDoneToday as $row)
+                        @foreach($contactedToday as $row)
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <div class="w-8 h-8 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold">
@@ -232,10 +233,15 @@
                                 <span class="text-sm text-gray-700 font-medium">{{ $row->user->name ?? 'Usuario '.$row->user_id }}</span>
                             </div>
                             <span class="text-sm font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
-                                {{ $row->completadas_hoy }}
+                                {{ $row->contactadas_hoy }}
                             </span>
                         </div>
                         @endforeach
+                    </div>
+                    {{-- Total del día --}}
+                    <div class="mt-4 pt-3 border-t flex justify-between text-xs text-gray-500">
+                        <span>Total hoy</span>
+                        <span class="font-bold text-gray-800">{{ $contactedToday->sum('contactadas_hoy') }} props.</span>
                     </div>
                 @endif
             </div>

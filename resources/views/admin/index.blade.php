@@ -54,10 +54,10 @@
     </div>
 
     {{-- Carousel --}}
-    <div class="border rounded-lg shadow-sm bg-white overflow-hidden">
+    {{-- <div class="border rounded-lg shadow-sm bg-white overflow-hidden">
         <x-contact-queue-carousel />
         <x-modal-update-contact-date />
-    </div>
+    </div> --}}
 
 </div>
 
