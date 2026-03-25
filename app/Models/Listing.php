@@ -74,6 +74,8 @@ class Listing extends Model
         'land_appraisal',
         'construction_appraisal',
         'delete_at',
+        'posted_on_facebook',
+        'date_posted_facebook',
         'contact_at',
         'no_answer_at',
         'is_dual_operation'
