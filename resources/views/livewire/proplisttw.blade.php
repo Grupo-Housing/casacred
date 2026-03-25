@@ -240,11 +240,6 @@
                             <img width="20px" title="Visualizar en el sitio web" src="{{ asset('img/redireccionar.png') }}" alt="">
                         </a>
                     @endif
-                    @if($propertie->plusvalia)
-                        <div>
-                            <img width="12" height="12" src="{{asset('img/plusvalia.png')}}" alt="">
-                        </div>
-                        @endif
                         @if(Auth::user()->email == "marketing@casacredito.com" || Auth::user()->email == "developer2@casacredito.com")
                             <form action="{{ route('admin.listing.posted.facebook', $propertie->id) }}" method="POST">
                                 @csrf
@@ -690,11 +685,6 @@ function filter_properties(){
     //if(b_untildate < b_fromdate) alert('Formato no valido');
 
     let order_aux;
-
-    // let b_plusvalia = document.getElementById('b_plusvalia');
-
-    // if(b_plusvalia.checked) @this.set('plusvalia', 1);
-    // else @this.set('plusvalia', '');
 
     let b_bedrooms = "";
 

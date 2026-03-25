@@ -30,7 +30,6 @@ class Proplisttw extends Component
         $credit_vip,
         $bedrooms,
         $bathrooms,
-        $plusvalia,
         $transaccion,
         $tagstatus,
         $owner_search;
@@ -185,8 +184,6 @@ class Proplisttw extends Component
         if ($this->bedrooms)     $properties_filter->where('bedroom', $this->bedrooms);
 
         if ($this->bathrooms)    $properties_filter->where('bathroom', $this->bathrooms);
-
-        if ($this->plusvalia)  $properties_filter->where('plusvalia', $this->plusvalia);
 
         if ($this->transaccion)          $properties_filter->where('listingtypestatus', 'LIKE', "%" . $this->transaccion . "%");
 

@@ -160,7 +160,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:sanctum', 'verified']]
 
     Route::post('setcomment', [TwController::class, 'setcomment'])->name('home.tw.setcomment');
     Route::post('setoutstanding', [AdminController::class, 'setoutstanding'])->name('home.tw.setoutstanding');
-    Route::post('setisinplusvalia', [AdminController::class, 'setisinplusvalia'])->name('home.tw.setisinplusvalia');
     Route::post('setwatermark', [UserController::class, 'quitwatermark'])->name('home.user.watermark');
 
     Route::get('contacts', [TwController::class, 'contacts'])->name('admin.contacts');

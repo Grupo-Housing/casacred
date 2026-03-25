@@ -67,7 +67,6 @@ class Listing extends Model
         'observations_type_property',
         'cavity_error',
         'warranty',
-        'plusvalia',
         'niv_constr',
         'num_pisos',
         'pisos_constr',
