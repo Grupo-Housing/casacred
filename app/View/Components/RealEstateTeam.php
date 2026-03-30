@@ -26,18 +26,18 @@ class RealEstateTeam extends Component
         $this->teamMembers = [
             [
                 'id' => 1,
-                'name' => 'Belen Astudillo',
+                'name' => 'Karen Salas',
                 'title' => 'Gestora',
-                'image' => 'belen-astudillo.webp',
+                'image' => 'karen-salas.webp',
                 'email' => 'ana@inmobiliaria.com',
                 'phone' => '+593 99 345 6789',
                 'specialties' => ['Rentas', 'Propiedades de Lujo'],
             ],
             [
                 'id' => 2,
-                'name' => 'Daysi Peralta',
+                'name' => 'Veronica Medina',
                 'title' => 'Asesora',
-                'image' => 'daysi-peralta.webp',
+                'image' => 'veronica-medina.webp',
                 'email' => 'ana@inmobiliaria.com',
                 'phone' => '+593 99 345 6789',
                 'specialties' => ['Rentas', 'Propiedades de Lujo'],
