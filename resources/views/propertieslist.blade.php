@@ -787,6 +787,11 @@
         .zone-oeste  { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
         .zone-centro { background: #ede7f6; color: #4527a0; border: 1px solid #d1c4e9; }
 
+        .zone-noreste  { background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; }
+        .zone-noroeste { background: #e8eaf6; color: #283593; border: 1px solid #c5cae9; }
+        .zone-sureste  { background: #f1f8e9; color: #33691e; border: 1px solid #dcedc8; }
+        .zone-suroeste { background: #fff8e1; color: #e65100; border: 1px solid #ffecb3; }
+
         /* Mapa modal */
         #zoneMap { height: 400px; width: 100%; border-radius: 8px; z-index: 1; }
         .zone-map-legend {
@@ -931,9 +936,13 @@
                                 <select id="zonaModal" class="custom-input-modal border" style="flex: 1;">
                                     <option value="">Todas las zonas</option>
                                     <option value="norte">Norte</option>
-                                    <option value="sur">Sur</option>
+                                    <option value="noreste">Noreste</option>
                                     <option value="este">Este</option>
+                                    <option value="sureste">Sureste</option>
+                                    <option value="sur">Sur</option>
+                                    <option value="suroeste">Suroeste</option>
                                     <option value="oeste">Oeste</option>
+                                    <option value="noroeste">Noroeste</option>
                                     <option value="centro">Centro</option>
                                 </select>
                                 <button type="button" class="map-btn" data-bs-toggle="modal" data-bs-target="#zoneMapModal" title="Ver mapa de zonas">
@@ -1186,9 +1195,13 @@
                             <select id="cardinalZone" class="custom-input">
                                 <option value="">Todas las zonas</option>
                                 <option value="norte">Norte</option>
-                                <option value="sur">Sur</option>
+                                <option value="noreste">Noreste</option>
                                 <option value="este">Este</option>
+                                <option value="sureste">Sureste</option>
+                                <option value="sur">Sur</option>
+                                <option value="suroeste">Suroeste</option>
                                 <option value="oeste">Oeste</option>
+                                <option value="noroeste">Noroeste</option>
                                 <option value="centro">Centro</option>
                             </select>
                             <button type="button" class="map-btn" data-bs-toggle="modal" data-bs-target="#zoneMapModal" title="Seleccionar zona en mapa">
@@ -1347,11 +1360,15 @@
                 <div class="modal-body pt-2">
                     <!-- Leyenda clickeable -->
                     <div class="zone-map-legend">
-                        <span class="zone-norte" data-zone="norte" onclick="selectZoneFromLegend('norte')">🔵 Norte</span>
-                        <span class="zone-sur"   data-zone="sur"   onclick="selectZoneFromLegend('sur')">🔴 Sur</span>
-                        <span class="zone-este"  data-zone="este"  onclick="selectZoneFromLegend('este')">🟢 Este</span>
-                        <span class="zone-oeste" data-zone="oeste" onclick="selectZoneFromLegend('oeste')">🟠 Oeste</span>
-                        <span class="zone-centro" data-zone="centro" onclick="selectZoneFromLegend('centro')">🟣 Centro</span>
+                        <span class="zone-norte"    data-zone="norte"    onclick="selectZoneFromLegend('norte')">🔵 Norte</span>
+                        <span class="zone-noreste"  data-zone="noreste"  onclick="selectZoneFromLegend('noreste')">🔷 Noreste</span>
+                        <span class="zone-este"     data-zone="este"     onclick="selectZoneFromLegend('este')">🟢 Este</span>
+                        <span class="zone-sureste"  data-zone="sureste"  onclick="selectZoneFromLegend('sureste')">🟩 Sureste</span>
+                        <span class="zone-sur"      data-zone="sur"      onclick="selectZoneFromLegend('sur')">🔴 Sur</span>
+                        <span class="zone-suroeste" data-zone="suroeste" onclick="selectZoneFromLegend('suroeste')">🟧 Suroeste</span>
+                        <span class="zone-oeste"    data-zone="oeste"    onclick="selectZoneFromLegend('oeste')">🟠 Oeste</span>
+                        <span class="zone-noroeste" data-zone="noroeste" onclick="selectZoneFromLegend('noroeste')">🔹 Noroeste</span>
+                        <span class="zone-centro"   data-zone="centro"   onclick="selectZoneFromLegend('centro')">🟣 Centro</span>
                         <span style="background:#f1f3f5; color:#495057; border:1px solid #dee2e6;" data-zone="" onclick="selectZoneFromLegend('')">✕ Todas</span>
                     </div>
                     <!-- Mapa Leaflet -->
@@ -1591,59 +1608,40 @@
         // NOTA: Ajusta estas coordenadas según los límites reales de tu empresa
         const cuencaZones = {
             norte: {
-                label: 'Norte',
-                color: '#1565c0',
-                fillColor: '#90caf9',
-                coords: [
-                    [-2.8550, -79.0400],
-                    [-2.8550, -78.9400],
-                    [-2.8950, -78.9400],
-                    [-2.8950, -79.0400]
-                ]
+                label: 'Norte', color: '#1565c0', fillColor: '#90caf9',
+                coords: [[-2.8550,-79.0200],[-2.8550,-78.9600],[-2.8950,-78.9600],[-2.8950,-79.0200]]
             },
-            sur: {
-                label: 'Sur',
-                color: '#c62828',
-                fillColor: '#ef9a9a',
-                coords: [
-                    [-2.9250, -79.0400],
-                    [-2.9250, -78.9400],
-                    [-2.9650, -78.9400],
-                    [-2.9650, -79.0400]
-                ]
+            noreste: {
+                label: 'Noreste', color: '#0d47a1', fillColor: '#bbdefb',
+                coords: [[-2.8550,-78.9600],[-2.8550,-78.9000],[-2.8950,-78.9000],[-2.8950,-78.9600]]
             },
             este: {
-                label: 'Este',
-                color: '#2e7d32',
-                fillColor: '#a5d6a7',
-                coords: [
-                    [-2.8950, -78.9400],
-                    [-2.8950, -78.8800],
-                    [-2.9250, -78.8800],
-                    [-2.9250, -78.9400]
-                ]
+                label: 'Este', color: '#2e7d32', fillColor: '#a5d6a7',
+                coords: [[-2.8950,-78.9600],[-2.8950,-78.8800],[-2.9250,-78.8800],[-2.9250,-78.9600]]
+            },
+            sureste: {
+                label: 'Sureste', color: '#33691e', fillColor: '#dcedc8',
+                coords: [[-2.9250,-78.9600],[-2.9250,-78.8800],[-2.9650,-78.8800],[-2.9650,-78.9600]]
+            },
+            sur: {
+                label: 'Sur', color: '#c62828', fillColor: '#ef9a9a',
+                coords: [[-2.9250,-79.0200],[-2.9250,-78.9600],[-2.9650,-78.9600],[-2.9650,-79.0200]]
+            },
+            suroeste: {
+                label: 'Suroeste', color: '#e65100', fillColor: '#ffcc80',
+                coords: [[-2.9250,-79.0900],[-2.9250,-79.0200],[-2.9650,-79.0200],[-2.9650,-79.0900]]
             },
             oeste: {
-                label: 'Oeste',
-                color: '#e65100',
-                fillColor: '#ffcc80',
-                coords: [
-                    [-2.8950, -79.0900],
-                    [-2.8950, -79.0400],
-                    [-2.9250, -79.0400],
-                    [-2.9250, -79.0900]
-                ]
+                label: 'Oeste', color: '#e65100', fillColor: '#ffcc80',
+                coords: [[-2.8950,-79.0900],[-2.8950,-79.0200],[-2.9250,-79.0200],[-2.9250,-79.0900]]
+            },
+            noroeste: {
+                label: 'Noroeste', color: '#283593', fillColor: '#c5cae9',
+                coords: [[-2.8550,-79.0900],[-2.8550,-79.0200],[-2.8950,-79.0200],[-2.8950,-79.0900]]
             },
             centro: {
-                label: 'Centro',
-                color: '#4527a0',
-                fillColor: '#ce93d8',
-                coords: [
-                    [-2.8950, -79.0400],
-                    [-2.8950, -78.9400],
-                    [-2.9250, -78.9400],
-                    [-2.9250, -79.0400]
-                ]
+                label: 'Centro', color: '#4527a0', fillColor: '#ce93d8',
+                coords: [[-2.8950,-79.0200],[-2.8950,-78.9600],[-2.9250,-78.9600],[-2.9250,-79.0200]]
             }
         };
 
@@ -1827,13 +1825,15 @@
         // Helper para generar el badge de zona cardinal
         function buildZoneBadge(cardinalZone) {
             if (!cardinalZone) return '';
-            const zoneLabels = { norte:'Norte', sur:'Sur', este:'Este', oeste:'Oeste', centro:'Centro' };
+            const zoneLabels = {
+                norte:'Norte', sur:'Sur', este:'Este', oeste:'Oeste', centro:'Centro',
+                noreste:'Noreste', noroeste:'Noroeste', sureste:'Sureste', suroeste:'Suroeste'
+            };
             const zoneKey = cardinalZone.toLowerCase().trim();
             if (!zoneLabels[zoneKey]) return '';
-            const zoneLabel = zoneLabels[zoneKey];
             return `<span class="zone-badge zone-${zoneKey}" style="margin-left: 6px;">
                 <svg width="7" height="7" viewBox="0 0 10 10" fill="currentColor" style="flex-shrink:0;"><circle cx="5" cy="5" r="5"/></svg>
-                ${zoneLabel}
+                ${zoneLabels[zoneKey]}
             </span>`;
         }
 
