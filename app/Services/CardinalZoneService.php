@@ -4,17 +4,26 @@ namespace App\Services;
 
 class CardinalZoneService
 {
+    /**
+     * Ciudades soportadas con su centro geográfico y radio de zona "centro".
+     * Para agregar una nueva ciudad, solo añade una entrada aquí.
+     */
     private const CITY_CENTERS = [
-        'cuenca' => ['lat' => -2.9001285, 'lng' => -79.0058965, 'radius' => 0.012],
+        'cuenca' => [
+            'lat'    => -2.9001285,
+            'lng'    => -79.0058965,
+            'radius' => 0.012,
+        ],
+        // Ejemplo para agregar Gualaceo en el futuro:
+        // 'gualaceo' => [
+        //     'lat'    => -2.8856,
+        //     'lng'    => -78.7741,
+        //     'radius' => 0.008,
+        // ],
     ];
 
     private const DIAGONAL_THRESHOLD = 0.35;
 
-    /**
-     * Mapa explícito para zonas diagonales.
-     * Evita concatenación incorrecta como 'norte'.'este' = 'norteeste'.
-     * Clave: "{ns}_{eo}" => zona correcta
-     */
     private const DIAGONAL_MAP = [
         'norte_este'  => 'noreste',
         'norte_oeste' => 'noroeste',
@@ -22,6 +31,16 @@ class CardinalZoneService
         'sur_oeste'   => 'suroeste',
     ];
 
+    /**
+     * Calcula la zona cardinal de una propiedad.
+     *
+     * Retorna null si:
+     * - Las coordenadas son inválidas o ausentes
+     * - La ciudad no está en CITY_CENTERS (ciudad no soportada)
+     *
+     * Esto es intencional: una propiedad en Gualaceo (no soportada aún)
+     * debe quedar con cardinal_zone = NULL, no con una zona incorrecta.
+     */
     public function calculate(?float $lat, ?float $lng, ?string $city = null): ?string
     {
         if ($lat === null || $lng === null || $lat == 0 || $lng == 0) {
@@ -30,6 +49,7 @@ class CardinalZoneService
 
         $center = $this->getCityCenter($city);
 
+        // Ciudad no reconocida → null (no asignar zona incorrecta)
         if ($center === null) {
             return null;
         }
@@ -38,7 +58,7 @@ class CardinalZoneService
         $diffLng = $lng - $center['lng']; // + = este,  - = oeste
         $radius  = $center['radius'];
 
-        // ── Zona central ──────────────────────────────────────────────────────
+        // Zona central
         if (abs($diffLat) <= $radius && abs($diffLng) <= $radius) {
             return 'centro';
         }
@@ -50,22 +70,37 @@ class CardinalZoneService
         $ratioLat = $absDiffLat / $dominant;
         $ratioLng = $absDiffLng / $dominant;
 
-        // ── Zona diagonal ─────────────────────────────────────────────────────
+        // Zona diagonal
         if ($ratioLat >= self::DIAGONAL_THRESHOLD && $ratioLng >= self::DIAGONAL_THRESHOLD) {
             $ns  = $diffLat > 0 ? 'norte' : 'sur';
             $eo  = $diffLng > 0 ? 'este'  : 'oeste';
-            $key = "{$ns}_{$eo}";  // ej: "norte_este"
+            $key = "{$ns}_{$eo}";
 
-            // Usar mapa explícito — nunca concatenar directamente
             return self::DIAGONAL_MAP[$key] ?? null;
         }
 
-        // ── Eje dominante único ───────────────────────────────────────────────
+        // Eje dominante único
         if ($absDiffLat >= $absDiffLng) {
             return $diffLat > 0 ? 'norte' : 'sur';
         }
 
         return $diffLng > 0 ? 'este' : 'oeste';
+    }
+
+    /**
+     * Verifica si una ciudad está soportada por el servicio.
+     */
+    public function isCitySupported(?string $city): bool
+    {
+        return $this->getCityCenter($city) !== null;
+    }
+
+    /**
+     * Devuelve la lista de ciudades soportadas (nombres normalizados).
+     */
+    public static function getSupportedCities(): array
+    {
+        return array_keys(self::CITY_CENTERS);
     }
 
     private function getCityCenter(?string $city): ?array
@@ -167,7 +202,11 @@ class CardinalZoneService
         $center = $this->getCityCenter($city);
 
         if (!$center) {
-            return ['error' => 'Ciudad no reconocida'];
+            return [
+                'error'            => 'Ciudad no reconocida o no soportada',
+                'ciudad_ingresada' => $city,
+                'ciudades_activas' => implode(', ', self::getSupportedCities()),
+            ];
         }
 
         $diffLat    = $lat - $center['lat'];
@@ -186,6 +225,7 @@ class CardinalZoneService
             'lat'              => $lat,
             'lng'              => $lng,
             'city'             => $city,
+            'city_supported'   => 'sí',
             'center_lat'       => $center['lat'],
             'center_lng'       => $center['lng'],
             'diffLat'          => round($diffLat, 6),
