@@ -35,40 +35,22 @@ class TeamSection extends Component
             ],
             [
                 'id' => 3,
-                'name' => 'Andrea Hurtado',
+                'name' => 'Veronica Medina',
                 'title' => 'Asesora',
-                'image' => 'andrea-hurtado.webp',
+                'image' => 'veronica-medina.webp',
                 'email' => 'maria@inmobiliaria.com',
                 'phone' => '+593 99 123 4567',
                 'specialties' => ['Ventas', 'Casas Residenciales']
             ],
             [
                 'id' => 5,
-                'name' => 'Belen Astudillo',
+                'name' => 'Karen Salas',
                 'title' => 'Gestora',
-                'image' => 'belen-astudillo.webp',
+                'image' => 'karen-salas.webp',
                 'email' => 'ana@inmobiliaria.com',
                 'phone' => '+593 99 345 6789',
                 'specialties' => ['Rentas', 'Propiedades de Lujo'],
             ],
-            [
-                'id' => 2,
-                'name' => 'Daysi Peralta',
-                'title' => 'Asesora',
-                'image' => 'daysi-peralta.webp',
-                'email' => 'ana@inmobiliaria.com',
-                'phone' => '+593 99 345 6789',
-                'specialties' => ['Rentas', 'Propiedades de Lujo'],
-            ],
-            [
-                'id' => 4,
-                'name' => 'Melissa Mora',
-                'title' => 'Asesora',
-                'image' => 'melissa-mora.webp',
-                'email' => 'ana@inmobiliaria.com',
-                'phone' => '+593 99 345 6789',
-                'specialties' => ['Rentas', 'Propiedades de Lujo'],
-            ]
         ];
     }
 
