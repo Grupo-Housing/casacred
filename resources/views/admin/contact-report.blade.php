@@ -402,7 +402,7 @@
             </button>
 
             <div id="prices-body" class="collapsible-body expanded">
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto overflow-y-auto" style="max-height: 520px;">
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-gray-50 border-b border-gray-100">
