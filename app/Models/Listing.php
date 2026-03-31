@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class Listing extends Model
 {
@@ -129,5 +131,33 @@ class Listing extends Model
         ];
 
         return $labels[$this->cardinal_zone] ?? $this->cardinal_zone;
+    }
+
+    public function resolveImageUrl(string $image, string $size = 'full'): string
+    {
+        $s3Url = 'https://grupohousing.s3.amazonaws.com/listings/' . $image;
+
+        // Cachear el resultado por 24 horas para no hacer peticiones repetidas
+        $existsInS3 = Cache::remember('s3_exists_' . $image, 86400, function () use ($s3Url) {
+            try {
+                $headers = get_headers($s3Url, 1);
+                return $headers && strpos($headers[0], '200') !== false;
+            } catch (\Exception $e) {
+                return false;
+            }
+        });
+
+        if ($existsInS3) {
+            return $s3Url;
+        }
+
+        switch ($size) {
+            case 'thumb':
+                return url('uploads/listing/thumb/' . $image);
+            case 'thumb_600':
+                return url('uploads/listing/thumb/600/' . $image);
+            default:
+                return url('uploads/listing/' . $image);
+        }
     }
 }

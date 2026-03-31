@@ -1861,7 +1861,7 @@
                 let activeClass = index === 0 ? 'active' : '';
                 carouselItems += `
                 <div class="carousel-item ${activeClass}">
-                    <img src="/uploads/listing/600/${image}" class="d-block w-100 carousel-image" style="height:330px" loading="lazy" alt="${property.listing_title} - img ${index+1}">
+                    <img src="${image}" ...>
                 </div>`;
             });
 
@@ -2023,9 +2023,9 @@
             images.forEach((image, index) => {
                 let activeClass = index === 0 ? 'active' : '';
                 carouselItems += `
-            <div class="carousel-item ${activeClass}">
-                <img src="/uploads/listing/600/${image}" class="d-block w-100 carousel-image" style="height:330px" loading="lazy">
-            </div>`;
+                <div class="carousel-item ${activeClass}">
+                    <img src="${image}" ...>
+                </div>`;
             });
 
             let areaInfo = '';

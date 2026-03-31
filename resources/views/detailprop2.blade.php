@@ -814,20 +814,18 @@
                     <div class="carousel-inner">
                         @foreach (explode('|', $listing->images) as $image)
                             <div class="carousel-item @if ($loop->first) active @endif">
-                                <img src="{{ $filexists ? url('uploads/listing/thumb/', $image) : url('uploads/listing/', $image) }}"
-                                     class="d-block w-100 main-carousel-img">
+                                <img src="{{ $listing->resolveImageUrl($image, 'thumb') }}"
+                                    class="d-block w-100 main-carousel-img">
                             </div>
                         @endforeach
                     </div>
-                
+
                     @if($listing->video && !Str::endsWith($listing->video, '.mp4'))
-                        <!-- Ícono SVG superpuesto -->
                         <div class="play-intro-overlay" data-toggle="modal" data-target="#videoModalProperty">
                             <img class="play-intro-icon" src="{{ asset('img/icono-reproducir-video-propiedad.webp') }}" alt="Icono de Reproducir Video" title="Icono de Reproducir Video">
                         </div>
                     @endif
-                
-                    <!-- Controles personalizados -->
+
                     <a class="carousel-control-prev custom-control" href="#carouselImages" role="button" data-slide="prev">
                         <span class="carousel-control-prev-icon custom-icon" aria-hidden="true"></span>
                     </a>
@@ -835,22 +833,21 @@
                         <span class="carousel-control-next-icon custom-icon" aria-hidden="true"></span>
                     </a>
                 </div>
-        
-                <!-- Botón Ver todas -->
+
                 <button class="btn-overlay" data-toggle="modal" data-target="#allPhotosModal">
                     Ver todas las fotos
                 </button>
             </div>
-        
+
             <!-- Miniaturas -->
             <div class="col-lg-3 col-md-12 d-flex flex-lg-column flex-row justify-content-between">
                 @foreach (explode('|', $listing->images) as $image)
                     @if ($loop->index < 4)
                         <div class="thumb-wrapper mb-3 mr-2">
-                            <img src="{{ $filexists ? url('uploads/listing/thumb/600/', $image) : url('uploads/listing/', $image) }}"
-                                 class="img-fluid thumb-img"
-                                 data-target="#carouselImages"
-                                 data-slide-to="{{ $loop->index }}">
+                            <img src="{{ $listing->resolveImageUrl($image, 'thumb_600') }}"
+                                class="img-fluid thumb-img"
+                                data-target="#carouselImages"
+                                data-slide-to="{{ $loop->index }}">
                         </div>
                     @endif
                 @endforeach
