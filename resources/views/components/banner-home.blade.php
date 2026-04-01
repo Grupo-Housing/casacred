@@ -1,7 +1,6 @@
 <section class="hero-real-estate">
 
     <video id="heroVideo" class="hero-video" autoplay muted loop playsinline preload="none">
-        {{-- <source src="{{ asset('img/grupo-housing-inmobiliaria-en-cuenca-banner-mobile.webm') }}" type="video/webm"> --}}
         <source src="" type="video/mp4">
         Tu navegador no soporta videos en HTML5.
     </video>
@@ -28,7 +27,13 @@
         <div class="search-wrapper">
             <form class="search-form" id="searchForm">
                 <div class="form-grid">
-                    <!-- Ubicación -->  
+
+                    <!-- Código de propiedad -->
+                    <div class="form-group">
+                        <input type="text" id="searchcode" class="inpBanner" placeholder="Código de propiedad" maxlength="10" inputmode="numeric" autocomplete="off">
+                    </div>
+
+                    <!-- Ubicación -->
                     <div class="form-group">
                         <input type="text" id="searchtxt" class="inpBanner" placeholder="Sector, Parroquia, Provincia">
                     </div>
@@ -36,22 +41,22 @@
                     <!-- Propiedad -->
                     <div class="form-group">
                         <select id="ftop_ptype" class="selBanner">
-                            <option value="">Elija tipo de propiedad</option> 
-                            <option data-ids="[23,1]" value="1">Casas</option> 
-                            <option data-ids="[24,3]" value="2">Departamentos</option> 
+                            <option value="">Elija tipo de propiedad</option>
+                            <option data-ids="[23,1]" value="1">Casas</option>
+                            <option data-ids="[24,3]" value="2">Departamentos</option>
                             <option data-ids="[26,10]" value="15">Terrenos</option>
-                            <option data-ids="[25,5]" value="3">Casas Comerciales</option> 
-                            <option data-ids="[32,6]" value="4">Locales Comerciales</option> 
-                            <option data-ids="[36,8]" value="11">Suites</option> 
-                            <option data-ids="[37]" value="5">Edificios</option> 
-                            <option data-ids="[39]" value="6">Hoteles</option> 
-                            <option data-ids="[41]" value="7">Fabricas</option> 
-                            <option data-ids="[42]" value="8">Parqueaderos</option> 
-                            <option data-ids="[43]" value="9">Bodegas</option> 
-                            <option data-ids="[35,7]" value="10">Oficinas</option> 
-                            <option data-ids="[29,9]" value="12">Quintas</option> 
-                            <option data-ids="[30,30]" value="13">Haciendas</option> 
-                            <option data-ids="[45]" value="14">Naves Industriales</option> 
+                            <option data-ids="[25,5]" value="3">Casas Comerciales</option>
+                            <option data-ids="[32,6]" value="4">Locales Comerciales</option>
+                            <option data-ids="[36,8]" value="11">Suites</option>
+                            <option data-ids="[37]" value="5">Edificios</option>
+                            <option data-ids="[39]" value="6">Hoteles</option>
+                            <option data-ids="[41]" value="7">Fabricas</option>
+                            <option data-ids="[42]" value="8">Parqueaderos</option>
+                            <option data-ids="[43]" value="9">Bodegas</option>
+                            <option data-ids="[35,7]" value="10">Oficinas</option>
+                            <option data-ids="[29,9]" value="12">Quintas</option>
+                            <option data-ids="[30,30]" value="13">Haciendas</option>
+                            <option data-ids="[45]" value="14">Naves Industriales</option>
                         </select>
                     </div>
 
@@ -75,9 +80,9 @@
         </div>
     </div>
 
-    <!-- Flecha scroll --> 
-    <div class="scroll-arrow" id="scroll-button"> 
-        <img src="{{ asset('img/flecha-abajo-banner.webp') }}" alt="Icono de flecha apuntando abajo"> 
+    <!-- Flecha scroll -->
+    <div class="scroll-arrow" id="scroll-button">
+        <img src="{{ asset('img/flecha-abajo-banner.webp') }}" alt="Icono de flecha apuntando abajo">
     </div>
 
 </section>
@@ -100,7 +105,7 @@
     font-weight: bold;
     z-index: 1;
     text-align: center;
-    margin: 40px 0 100px 0; /* Espaciado vertical entre título y filtros */
+    margin: 40px 0 100px 0;
     line-height: 1.3;
     height: 20px;
 }
@@ -125,13 +130,13 @@
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 1100px;
+    max-width: 1200px;
     padding: 0 20px;
 }
 
 .hero-title {
     margin-top: 200px;
-    margin-bottom: 100px; /* reducido para dar espacio al nuevo texto */
+    margin-bottom: 100px;
     color: white;
 }
 
@@ -155,12 +160,12 @@
 
 .search-form {
     width: 100%;
-    max-width: 950px;
+    max-width: 1100px;
 }
 
 .form-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr auto;
+    grid-template-columns: 1fr 1fr 1fr 1fr auto;
     gap: 20px;
     align-items: center;
 }
@@ -176,18 +181,17 @@
     width: 100%;
 }
 
-.selBanner{
+.selBanner {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-
     background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='32' viewBox='0 0 24 24' width='32' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
     background-repeat: no-repeat;
     background-position: right 15px center;
     background-size: 28px;
 }
 
-.inpBanner:focus, .selBanner:focus{
+.inpBanner:focus, .selBanner:focus {
     outline: none;
     box-shadow: none;
     border-color: inherit;
@@ -210,171 +214,196 @@
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
 }
 
 .search-btn:hover {
     background: #f1f1f1;
 }
 
-/* Responsive */
+.scroll-arrow {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 2rem;
+    animation: bounce 2s infinite;
+    cursor: pointer;
+    z-index: 2;
+}
+
+@keyframes bounce {
+    0%, 20%, 53%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40%, 43%                 { transform: translateX(-50%) translateY(-15px); }
+    70%                      { transform: translateX(-50%) translateY(-7px); }
+    90%                      { transform: translateX(-50%) translateY(-2px); }
+}
+
+#hero-text { line-height: 1.2; }
+#hero-text span { opacity: 0; transition: opacity 1s ease-in-out; }
+#hero-text.show span { opacity: 1; }
+
 @media (max-width: 768px) {
-    .hero-title .one-title {
-        font-size: 2.2rem;
-    }
-    .hero-title .two-title {
-        font-size: 1.7rem;
-    }
+    .hero-title .one-title { font-size: 2.2rem; }
+    .hero-title .two-title { font-size: 1.7rem; }
+    .hero-title { margin-top: 120px; margin-bottom: 40px; }
+    .hero-services { font-size: 1.5rem; margin: 20px 0 50px 0; }
+    .scroll-arrow { display: none; }
+
+    /* Grid 2 columnas: código | ubicación arriba, tipo | categoría abajo, botón full */
     .form-grid {
-        grid-template-columns: 1fr;
-        gap: 0px;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
     }
 
-    .hero-title {
-        margin-top: 120px;
-        margin-bottom: 50px;
+    /* El botón ocupa ambas columnas */
+    .form-grid .form-group:last-child {
+        grid-column: 1 / -1;
     }
 
-    .hero-services {
-        font-size: 1.5rem;
-        margin: 30px 0;
+    /* Inputs más compactos */
+    .inpBanner,
+    .selBanner {
+        padding: 10px 12px;
+        font-size: 0.85rem;
     }
-    .scroll-arrow{
-        display: none;
+
+    .inpBanner::placeholder {
+        font-size: 0.8rem;
+    }
+
+    .selBanner {
+        background-size: 20px;
+        background-position: right 8px center;
+        padding-right: 28px;
+    }
+
+    .search-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 11px 20px;
+        font-size: 0.95rem;
+    }
+
+    .search-wrapper {
+        padding: 0 4px;
     }
 }
 
 @media (max-width: 480px) {
-    .hero-title .one-title {
-        font-size: 1.8rem;
-    }
-    .hero-title .two-title {
-        font-size: 1.4rem;
-    }
-    .hero-services {
-        font-size: 1.1rem;
-    }
-}
-
-.scroll-arrow { 
-    position: absolute; 
-    bottom: 30px; 
-    left: 50%; 
-    transform: translateX(-50%); 
-    color: white; 
-    font-size: 2rem; 
-    animation: bounce 2s infinite; 
-    cursor: pointer; 
-    z-index: 2; 
-}
-
-@keyframes bounce { 
-    0%, 20%, 53%, 80%, 100% { 
-        transform: translateX(-50%) translateY(0); 
-    } 
-    40%, 43% { 
-        transform: translateX(-50%) translateY(-15px); 
-    } 
-    70% { 
-        transform: translateX(-50%) translateY(-7px); 
-    } 
-    90% { 
-        transform: translateX(-50%) translateY(-2px); 
-    } 
-}
-
-#hero-text{
-    line-height: 1.2;
-}
-
-#hero-text span {
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-}
-
-#hero-text.show span {
-    opacity: 1;
+    .hero-title .one-title { font-size: 1.8rem; }
+    .hero-title .two-title { font-size: 1.4rem; }
+    .hero-services { font-size: 1.1rem; }
+    .form-grid { gap: 6px; }
+    .inpBanner, .selBanner { padding: 9px 10px; font-size: 0.8rem; }
 }
 </style>
 
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Scroll suave
-        const scrollButton = document.getElementById('scroll-button');
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // ─── Scroll suave ────────────────────────────────────────────────────
+        const scrollButton  = document.getElementById('scroll-button');
         const targetSection = document.getElementById('section-property-categories');
 
-        scrollButton.addEventListener('click', function() {
-            if (targetSection) {
-                const sectionPosition = targetSection.getBoundingClientRect().top;
-                const offset = -20;
-                const finalPosition = sectionPosition + window.scrollY + offset;
-                window.scrollTo({
-                    top: finalPosition,
-                    behavior: 'smooth'
-                });
-            }
-        });
+        if (scrollButton && targetSection) {
+            scrollButton.addEventListener('click', function () {
+                const finalPosition = targetSection.getBoundingClientRect().top + window.scrollY - 20;
+                window.scrollTo({ top: finalPosition, behavior: 'smooth' });
+            });
+        }
 
-        // Textos dinámicos del título
+        // ─── Textos dinámicos del título ─────────────────────────────────────
         const texts = [
-            { one: "Tu nuevo hogar", two: "te está esperando" },
-            { one: "Encuentra tu casa", two: "ideal en pocos pasos" },
-            { one: "Haz realidad tus", two: "sueños inmobiliarios" },
+            { one: "Tu nuevo hogar",      two: "te está esperando" },
+            { one: "Encuentra tu casa",   two: "ideal en pocos pasos" },
+            { one: "Haz realidad tus",    two: "sueños inmobiliarios" },
             { one: "Vive la experiencia", two: "de un nuevo comienzo" }
         ];
 
-        let index = 0;
-        const heroText = document.getElementById("hero-text");
-        const oneSpan = heroText.querySelector(".one-title");
-        const twoSpan = heroText.querySelector(".two-title");
+        let index    = 0;
+        const heroText = document.getElementById('hero-text');
+        const oneSpan  = heroText.querySelector('.one-title');
+        const twoSpan  = heroText.querySelector('.two-title');
 
         function changeText() {
-            heroText.classList.remove("show");
-
+            heroText.classList.remove('show');
             setTimeout(() => {
                 index = (index + 1) % texts.length;
                 oneSpan.textContent = texts[index].one;
                 twoSpan.textContent = texts[index].two;
-                heroText.classList.add("show");
+                heroText.classList.add('show');
             }, 1000);
         }
 
-        heroText.classList.add("show");
+        heroText.classList.add('show');
         setInterval(changeText, 4000);
 
-        // Formulario búsqueda
+        // ─── Formulario principal ────────────────────────────────────────────
         const searchForm = document.getElementById('searchForm');
         if (searchForm) {
-            searchForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const typeSelect = document.getElementById('ftop_ptype');
-                const searchInput = document.getElementById('searchtxt');
-                const operationType = document.getElementById('ftop_category');
-                let category = "general";
-                if(operationType.value != ""){
-                    category = operationType.value;
+            searchForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const codeInput     = document.getElementById('searchcode');
+                const code          = codeInput.value.trim();
+
+                // Si hay código, tiene prioridad y redirige directo a /{code}
+                if (code !== '') {
+                    if (!/^[0-9]{3,10}$/.test(code)) {
+                        codeInput.focus();
+                        codeInput.style.borderColor = '#ff6b6b';
+                        codeInput.placeholder = 'Solo números (3-10 dígitos)';
+                        setTimeout(() => {
+                            codeInput.style.borderColor = '';
+                            codeInput.placeholder = 'Código de propiedad';
+                        }, 2500);
+                        return;
+                    }
+                    window.location.href = `/${code}`;
+                    return;
                 }
-                let typeName = typeSelect.options[typeSelect.selectedIndex].text.toLowerCase().replace(
-                    /\s+/g, '-');
-                if (!typeSelect.value || typeName === 'tipo-de-propiedad') {
+
+                // Sin código: búsqueda normal por filtros
+                const typeSelect    = document.getElementById('ftop_ptype');
+                const searchInput   = document.getElementById('searchtxt');
+                const operationType = document.getElementById('ftop_category');
+
+                let category = operationType.value || 'venta';
+                let typeName = typeSelect.options[typeSelect.selectedIndex].text
+                    .toLowerCase().replace(/\s+/g, '-');
+
+                if (!typeSelect.value || typeName === 'elija-tipo-de-propiedad') {
                     typeName = 'propiedades';
                 }
+
                 const searchTerm = searchInput.value.trim();
-                let queryParams = '';
-                if (searchTerm) {
-                    queryParams = `?searchTerm=${encodeURIComponent(searchTerm)}`;
-                }
-                let finalUrl = `/${typeName}-en-${category}${queryParams}`;
-                window.location.href = finalUrl;
+                let queryParams  = searchTerm ? `?searchTerm=${encodeURIComponent(searchTerm)}` : '';
+
+                window.location.href = `/${typeName}-en-${category}${queryParams}`;
+            });
+
+            // Solo permitir dígitos en el campo de código
+            document.getElementById('searchcode').addEventListener('keypress', function (e) {
+                if (!/[0-9]/.test(e.key)) e.preventDefault();
+            });
+
+            // Limpiar estilo de error al escribir
+            document.getElementById('searchcode').addEventListener('input', function () {
+                this.style.borderColor = '';
             });
         }
 
-        // Typewriter effect corregido
-        const words = ["Vende tu propiedad", "Compra tu vivienda", "Avalúo de tu propiedad"];
-        let wordIndex = 0;
-        let charIndex = 0;
+        // ─── Typewriter ──────────────────────────────────────────────────────
+        const words = ['Vende tu propiedad', 'Compra tu vivienda', 'Avalúo de tu propiedad'];
+        let wordIndex  = 0;
+        let charIndex  = 0;
         let isDeleting = false;
-        const typewriterElement = document.getElementById("typewriter");
+        const typewriterElement = document.getElementById('typewriter');
 
         function typeEffect() {
             const currentWord = words[wordIndex];
@@ -387,69 +416,45 @@
                 charIndex--;
             }
 
-            let typingSpeed = isDeleting ? 70 : 120; // más rápido
+            let typingSpeed = isDeleting ? 70 : 120;
 
             if (!isDeleting && charIndex === currentWord.length) {
-                typingSpeed = 2000; // pausa al terminar palabra completa
-                isDeleting = true;
+                typingSpeed = 2000;
+                isDeleting  = true;
             } else if (isDeleting && charIndex === 0) {
-                isDeleting = false;
-                wordIndex = (wordIndex + 1) % words.length;
+                isDeleting  = false;
+                wordIndex   = (wordIndex + 1) % words.length;
                 typingSpeed = 300;
             }
 
             setTimeout(typeEffect, typingSpeed);
         }
 
-        if (typewriterElement) {
-            typeEffect();
-        }
+        if (typewriterElement) typeEffect();
 
-        //REPRODUCCION DE VIDEO MOVIL O ESCRITORIO
-        const videoElement = document.getElementById('heroVideo');
+        // ─── Video adaptativo (mobile / desktop) ─────────────────────────────
+        const videoElement  = document.getElementById('heroVideo');
         const sourceElement = videoElement.querySelector('source');
 
-        // Define las rutas de video usando el helper asset() de Laravel
         const desktopVideo = "{{ asset('img/inmobiliaria-en-cuenca-grupo-housing-video-banner.mp4') }}";
-        const mobileVideo = "{{ asset('img/Inmobiliaria-En-Cuenca-Grupo-Housing-Video-Banner-Movil.mp4') }}";
+        const mobileVideo  = "{{ asset('img/Inmobiliaria-En-Cuenca-Grupo-Housing-Video-Banner-Movil.mp4') }}";
+        const BREAKPOINT   = 768;
 
-        // Define el punto de corte (breakpoint) para la pantalla.
-        // Un valor común es 768px, pero puedes ajustarlo.
-        const BREAKPOINT = 768; // Pantallas de 768px o menos se consideran móviles.
-
-        /**
-         * Función que determina y carga el video correcto.
-         */
         function loadVideoBasedOnScreenSize() {
-            // Verifica si el ancho de la ventana es menor o igual al breakpoint.
-            const isMobileScreen = window.innerWidth <= BREAKPOINT;
-            
-            let newVideoUrl = isMobileScreen ? mobileVideo : desktopVideo;
-
-            // Optimización: Solo cambia y recarga si la URL es diferente a la actual.
-            // Esto evita recargas innecesarias del video.
+            const newVideoUrl = window.innerWidth <= BREAKPOINT ? mobileVideo : desktopVideo;
             if (sourceElement.src !== newVideoUrl) {
                 sourceElement.src = newVideoUrl;
-                
-                // Debemos llamar a .load() para que el elemento de video sepa 
-                // que debe cargar la nueva fuente que hemos asignado.
                 videoElement.load();
-                
-                // Opcional: reiniciar la reproducción por si estaba pausado
-                videoElement.play(); 
+                videoElement.play();
             }
         }
 
-        // 1. Ejecuta la función inmediatamente al cargar la página.
         loadVideoBasedOnScreenSize();
 
-        // 2. Ejecuta la función cada vez que se redimensione la ventana.
-        // Es buena práctica usar un 'debounce' para limitar la frecuencia de ejecución durante el resize.
         let resizeTimer;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(loadVideoBasedOnScreenSize, 150); // Espera 150ms antes de ejecutar
+            resizeTimer = setTimeout(loadVideoBasedOnScreenSize, 150);
         });
-
     });
 </script>

@@ -18,6 +18,9 @@ class PropertyController extends Controller
 
     public function viewPropertyCode($propertyCode)
     {
+
+        $provinces = DB::table('info_states')->where('country_id', 63)->get();
+
         return view('propertieslist', [
             'type' => null,
             'typeId' => null,
@@ -27,7 +30,8 @@ class PropertyController extends Controller
             'parish' => null,
             'minPrice' => null,
             'maxPrice' => null,
-            'propertyCode' => $propertyCode
+            'propertyCode' => $propertyCode,
+            'provinces' => $provinces
         ]);
     }
 

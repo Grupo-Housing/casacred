@@ -1470,28 +1470,43 @@
                 document.getElementById('toggleViewBtn').checked = true;
                 useCardView = true;
             }
-            const initialState = '{{ $state ?? '' }}';
-            const initialStatus = '{{ $status ?? '' }}';
-            const initialCity = '{{ $city ?? '' }}';
-            const initialParish = '{{ $parish ?? '' }}';
-            const initialMinPrice = '{{ $minPrice ?? '' }}';
-            const initialMaxPrice = '{{ $maxPrice ?? '' }}';
-            const initialTypeIds = JSON.parse('{{ json_encode($typeId) }}' || '[]');
-            const searchTerm = new URLSearchParams(window.location.search).get('searchTerm') || '';
 
-            if (initialCity || initialParish || searchTerm) document.getElementById('searchTerm').value = searchTerm || initialCity || initialParish || '';
-            if(initialMinPrice) document.getElementById('minPrice').value = initialMinPrice;
-            if(initialMaxPrice) document.getElementById('maxPrice').value = initialMaxPrice;
+                        const initialState        = '{{ $state ?? '' }}';
+            const initialStatus       = '{{ $status ?? '' }}';
+            const initialCity         = '{{ $city ?? '' }}';
+            const initialParish       = '{{ $parish ?? '' }}';
+            const initialMinPrice     = '{{ $minPrice ?? '' }}';
+            const initialMaxPrice     = '{{ $maxPrice ?? '' }}';
+            const initialTypeIds      = JSON.parse('{{ json_encode($typeId ?? []) }}');
+            const initialPropertyCode = '{{ $propertyCode ?? '' }}';
+ 
+            const searchTerm = new URLSearchParams(window.location.search).get('searchTerm') || '';
+ 
+            // Rellenar campos desktop
+            if (initialCity || initialParish || searchTerm)
+                document.getElementById('searchTerm').value = searchTerm || initialCity || initialParish || '';
+            if (initialMinPrice) document.getElementById('minPrice').value = initialMinPrice;
+            if (initialMaxPrice) document.getElementById('maxPrice').value = initialMaxPrice;
             setInitialPropertyType(initialTypeIds, 'propertyType');
             setInitialPropertyStatus(initialStatus, 'propertyStatus');
-
-            if (initialCity || initialParish || searchTerm) document.getElementById('searchTermModal').value = searchTerm || initialCity || initialParish || '';
-            if(initialMinPrice) document.getElementById('minPriceModal').value = initialMinPrice;
-            if(initialMaxPrice) document.getElementById('maxPriceModal').value = initialMaxPrice;
+ 
+            // Rellenar campos mobile
+            if (initialCity || initialParish || searchTerm)
+                document.getElementById('searchTermModal').value = searchTerm || initialCity || initialParish || '';
+            if (initialMinPrice) document.getElementById('minPriceModal').value = initialMinPrice;
+            if (initialMaxPrice) document.getElementById('maxPriceModal').value = initialMaxPrice;
             setInitialPropertyType(initialTypeIds, 'propertyTypeModal');
             setInitialPropertyStatus(initialStatus, 'propertyStatusModal');
+ 
+            // Si viene un código de propiedad, buscar por código directamente
+            // sin disparar el submit del formulario normal
+            if (initialPropertyCode) {
+                searchProperties(1, false, initialPropertyCode);
+            } else {
+                document.querySelector('#searchFormDesktop button[type="submit"]').click();
+            }
 
-            document.querySelector('#searchFormDesktop button[type="submit"]').click();
+
             const myModalEl = document.getElementById('searchFormModal');
             myModalEl.addEventListener('shown.bs.modal', event => {
                 const searchButton = document.querySelector('#searchFormModal button[type="submit"]');
@@ -2458,142 +2473,134 @@
         }
 
 
-        window.searchProperties = function(page = 1, isModal = false) {
+                window.searchProperties = function(page = 1, isModal = false, forcePropertyCode = '') {
             page = parseInt(page);
+ 
+            // Si viene un código forzado (desde inicialización), usarlo
+            // Si no, leer el campo searchTerm y verificar si es un código
+            const rawCode = forcePropertyCode.trim();
+            const searchTermValue = rawCode || (document.getElementById(isModal ? 'searchTermModal' : 'searchTerm')?.value || '');
+            const isPropertyCode = rawCode !== ''
+                ? /^[0-9]{3,10}$/.test(rawCode)
+                : /^[0-9]{3,10}$/.test(searchTermValue.trim());
+ 
             var currentTypeIds = isModal ? typeIdsArrayModal : typeIdsArray;
             var selectElement = isModal ? document.getElementById('propertyTypeModal') : document.getElementById('propertyType');
             var selectedOption = selectElement.options[selectElement.selectedIndex];
             var typeName = selectedOption.text;
             var typeValue = selectedOption.value;
-
+ 
             var statusElement = isModal ? document.getElementById('propertyStatusModal') : document.getElementById('propertyStatus');
             var statusValue = statusElement.value;
             var statusText = statusElement.options[statusElement.selectedIndex].text;
-
-            const searchTermValue = document.getElementById(isModal ? 'searchTermModal' : 'searchTerm')?.value || '';
-            const cityValue = document.getElementById(isModal ? 'cityModal' : 'city')?.value || '';
+ 
+            const cityValue  = document.getElementById(isModal ? 'cityModal'  : 'city')?.value  || '';
             const stateValue = document.getElementById(isModal ? 'stateModal' : 'state')?.value || '';
-
-            // ===== ZONA CARDINAL: leer el select correcto =====
+ 
             const cardinalZoneValue = isModal
-                ? (document.getElementById('zonaModal')?.value || '')
+                ? (document.getElementById('zonaModal')?.value    || '')
                 : (document.getElementById('cardinalZone')?.value || '');
-            // ==================================================
-            
-            const isPropertyCode = /^[0-9]{3,10}$/.test(searchTermValue.trim());
-
+ 
             if (!typeValue) {
                 typeName = 'propiedades';
             } else {
                 typeName = typeName.toLowerCase().replace(/\s+/g, '-');
             }
-
+ 
             const featuresMap = {
-                gymModal: { field: 'listingcharacteristic', ids: [99] },
-                wifiModal: { field: 'listinglistservices', ids: [33,5] },
-                poolModal: { field: 'listinggeneralcharacteristics', ids: [5] },
-                cisternModal: { field: 'listingcharacteristic', ids: [42] },
+                gymModal:     { field: 'listingcharacteristic',        ids: [99] },
+                wifiModal:    { field: 'listinglistservices',           ids: [33,5] },
+                poolModal:    { field: 'listinggeneralcharacteristics', ids: [5] },
+                cisternModal: { field: 'listingcharacteristic',        ids: [42] },
                 terraceModal: { field: 'listinggeneralcharacteristics', ids: [6] },
-                gardenModal: { field: 'listinggeneralcharacteristics', ids: [] }
+                gardenModal:  { field: 'listinggeneralcharacteristics', ids: [] }
             };
-
-            let listingcharacteristic = [];
-            let listinggeneralcharacteristics = [];
-            let listinglistservices = [];
-
+ 
+            let listingcharacteristic         = [];
+            let listinggeneralcharacteristics  = [];
+            let listinglistservices            = [];
+ 
             Object.keys(featuresMap).forEach(key => {
                 const checkbox = document.getElementById(key);
                 if (checkbox && checkbox.checked) {
                     const field = featuresMap[key].field;
-                    const ids = featuresMap[key].ids;
-                    if (field === 'listingcharacteristic') listingcharacteristic.push(...ids);
+                    const ids   = featuresMap[key].ids;
+                    if (field === 'listingcharacteristic')         listingcharacteristic.push(...ids);
                     if (field === 'listinggeneralcharacteristics') listinggeneralcharacteristics.push(...ids);
-                    if (field === 'listinglistservices') listinglistservices.push(...ids);
+                    if (field === 'listinglistservices')           listinglistservices.push(...ids);
                 }
             });
-
+ 
+            // Cuando es búsqueda por código, pasar solo el código y limpiar el resto
             const searchParams = new URLSearchParams({
-                searchTerm: searchTermValue,
-                bedrooms: document.getElementById(isModal ? 'bedroomsModal' : 'bedrooms')?.value || '',
-                bathrooms: document.getElementById(isModal ? 'bathroomsModal' : 'bathrooms')?.value || '',
-                garage: document.getElementById(isModal ? 'garageModal' : 'garage')?.value || '',
-                min_price: document.getElementById(isModal ? 'minPriceModal' : 'minPrice')?.value || '',
-                max_price: document.getElementById(isModal ? 'maxPriceModal' : 'maxPrice')?.value || '',
-                city: cityValue,
-                state: stateValue,
-                sector: document.getElementById(isModal ? 'sectorModal' : 'sector')?.value || '',
-                construction_area_min: document.getElementById(isModal ? 'constructionAreaMinModal' : 'constructionAreaMin')?.value || '',
-                construction_area_max: document.getElementById(isModal ? 'constructionAreaMaxModal' : 'constructionAreaMax')?.value || '',
-                land_area_min: document.getElementById(isModal ? 'landAreaMinModal' : 'landAreaMin')?.value || '',
-                land_area_max: document.getElementById(isModal ? 'landAreaMaxModal' : 'landAreaMax')?.value || '',
-                page: page,
-                normalized_status: document.getElementById(isModal ? 'propertyStatusModal' : 'propertyStatus')?.value || '',
-                is_new: document.getElementById('nuevaModal')?.checked ? 1 : '',
-                listyears_min: document.getElementById('listyearsmin')?.value || '',
-                listyears_max: document.getElementById('listyearsmax')?.value || '',
-                listingcharacteristic: listingcharacteristic.join(','),
-                listinggeneralcharacteristics: listinggeneralcharacteristics.join(','),
-                listinglistservices: listinglistservices.join(','),
-                cardinal_zone: cardinalZoneValue  // ← NUEVO PARÁMETRO
+                searchTerm:    isPropertyCode ? searchTermValue.trim() : searchTermValue,
+                bedrooms:      isPropertyCode ? '' : (document.getElementById(isModal ? 'bedroomsModal'           : 'bedrooms')?.value           || ''),
+                bathrooms:     isPropertyCode ? '' : (document.getElementById(isModal ? 'bathroomsModal'          : 'bathrooms')?.value          || ''),
+                garage:        isPropertyCode ? '' : (document.getElementById(isModal ? 'garageModal'             : 'garage')?.value             || ''),
+                min_price:     isPropertyCode ? '' : (document.getElementById(isModal ? 'minPriceModal'           : 'minPrice')?.value           || ''),
+                max_price:     isPropertyCode ? '' : (document.getElementById(isModal ? 'maxPriceModal'           : 'maxPrice')?.value           || ''),
+                city:          isPropertyCode ? '' : cityValue,
+                state:         isPropertyCode ? '' : stateValue,
+                sector:        isPropertyCode ? '' : (document.getElementById(isModal ? 'sectorModal'             : 'sector')?.value             || ''),
+                construction_area_min: isPropertyCode ? '' : (document.getElementById(isModal ? 'constructionAreaMinModal' : 'constructionAreaMin')?.value || ''),
+                construction_area_max: isPropertyCode ? '' : (document.getElementById(isModal ? 'constructionAreaMaxModal' : 'constructionAreaMax')?.value || ''),
+                land_area_min:         isPropertyCode ? '' : (document.getElementById(isModal ? 'landAreaMinModal'         : 'landAreaMin')?.value         || ''),
+                land_area_max:         isPropertyCode ? '' : (document.getElementById(isModal ? 'landAreaMaxModal'         : 'landAreaMax')?.value         || ''),
+                page:              page,
+                normalized_status: isPropertyCode ? '' : (document.getElementById(isModal ? 'propertyStatusModal' : 'propertyStatus')?.value || ''),
+                is_new:            isPropertyCode ? '' : (document.getElementById('nuevaModal')?.checked ? 1 : ''),
+                listyears_min:     isPropertyCode ? '' : (document.getElementById('listyearsmin')?.value || ''),
+                listyears_max:     isPropertyCode ? '' : (document.getElementById('listyearsmax')?.value || ''),
+                listingcharacteristic:         isPropertyCode ? '' : listingcharacteristic.join(','),
+                listinggeneralcharacteristics: isPropertyCode ? '' : listinggeneralcharacteristics.join(','),
+                listinglistservices:           isPropertyCode ? '' : listinglistservices.join(','),
+                cardinal_zone:     isPropertyCode ? '' : cardinalZoneValue
             });
-
+ 
+            // URL limpia
             let urlSlug;
             if (isPropertyCode) {
                 urlSlug = `/${searchTermValue.trim()}`;
             } else {
                 urlSlug = `/${typeName}`;
-                if (statusValue) {
-                    urlSlug += `-en-${statusValue}`;
-                }
-
+                if (statusValue) urlSlug += `-en-${statusValue}`;
+ 
                 const locationSlugForURL = buildLocationSlugForURL(searchTermValue, cityValue, stateValue);
-                if (locationSlugForURL) {
-                    urlSlug += `-en-${locationSlugForURL}`;
-                }
-
-                if(searchParams.get('min_price')){
-                    urlSlug += `-desde-${searchParams.get('min_price')}`;
-                }
-
-                if (searchParams.get('max_price')) {
-                    urlSlug += `-hasta-${searchParams.get('max_price')}`;
-                }
+                if (locationSlugForURL) urlSlug += `-en-${locationSlugForURL}`;
+                if (searchParams.get('min_price')) urlSlug += `-desde-${searchParams.get('min_price')}`;
+                if (searchParams.get('max_price')) urlSlug += `-hasta-${searchParams.get('max_price')}`;
             }
-
+ 
+            // Título
             if (isPropertyCode) {
-                document.title = `Propiedad ${searchTermValue} - Grupo Housing`;
+                document.title = `Propiedad ${searchTermValue.trim()} - Grupo Housing`;
             } else {
                 const fullLocation = buildLocationString(searchTermValue, cityValue, stateValue);
                 let titleComponents = [typeName.charAt(0).toUpperCase() + typeName.slice(1)];
-                if(fullLocation !== 'Ecuador') {
-                    titleComponents.push(fullLocation);
-                }
+                if (fullLocation !== 'Ecuador') titleComponents.push(fullLocation);
                 document.title = `${titleComponents.join(' en ')} - ${statusText}`;
             }
-
+ 
             let queryString = searchParams.toString();
-            if (Array.isArray(currentTypeIds) && currentTypeIds.length > 0) {
+            // Solo adjuntar type_ids cuando NO es búsqueda por código
+            if (!isPropertyCode && Array.isArray(currentTypeIds) && currentTypeIds.length > 0) {
                 currentTypeIds.forEach(id => {
                     queryString += `&type_ids[]=${encodeURIComponent(id)}`;
                 });
             }
-
+ 
             let canonical = document.querySelector("link[rel='canonical']");
-
-            window.history.pushState({
-                path: urlSlug
-            }, '', urlSlug);
-
+            window.history.pushState({ path: urlSlug }, '', urlSlug);
+            if (canonical) canonical.href = urlSlug;
+ 
             if (isPropertyCode) {
-                generateDynamicContentForPropertyCode(searchTermValue);
-                generateDynamicDescriptionForPropertyCode(searchTermValue);
+                generateDynamicContentForPropertyCode(searchTermValue.trim());
+                generateDynamicDescriptionForPropertyCode(searchTermValue.trim());
             } else {
                 generateDynamicContent(typeName, statusValue, searchTermValue, cityValue, stateValue);
                 generateDynamicDescriptionParagraph(typeName, statusValue, searchTermValue, cityValue, stateValue);
             }
-
-            canonical.href = urlSlug;
-
+ 
             axios.get('/api/propertys/list?' + queryString)
                 .then(function(response) {
                     const properties = response.data.properties;
@@ -2605,17 +2612,14 @@
                                 buildHorizontalPropertyHTML(property, index);
                         });
                         updateDynamicTitle(response.data.pagination.total, searchParams, isModal, isPropertyCode);
-
                         if (isPropertyCode) {
-                            generateDynamicDescriptionForPropertyCode(searchTermValue, true);
+                            generateDynamicDescriptionForPropertyCode(searchTermValue.trim(), true);
                         }
-
                     } else {
                         html = '<section class="row"><p class="text-center fw-bold">No hemos encontrado propiedades</p></section>';
                         updateDynamicTitle(response.data.pagination.total, searchParams, isModal, isPropertyCode);
-
                         if (isPropertyCode) {
-                            generateDynamicDescriptionForPropertyCode(searchTermValue, false);
+                            generateDynamicDescriptionForPropertyCode(searchTermValue.trim(), false);
                         }
                     }
                     document.getElementById('propertiesList').innerHTML = html;
