@@ -55,7 +55,7 @@ class AssignContactQueue extends Command
                 // CASO 1: Nunca contactada
                 $query->whereNull('contact_at')
 
-                    // CASO 2: Contactada hace +30 días (con o sin no_answer)
+                    // CASO 2: Contactada hace +30 días
                     ->orWhere(function ($q) use ($hace30, $hoy) {
                         $q->where('contact_at', '<', $hace30)
                             ->where(function ($q2) use ($hoy) {
@@ -64,12 +64,12 @@ class AssignContactQueue extends Command
                             });
                     })
 
-                    // CASO 3 (NUEVO): No contestó pero hay que reintentar hoy
-                    // contact_at puede ser reciente, pero no_answer_at es de antes de hoy
+                    // CASO 3: El último evento fue un "no contesta" y es de antes de hoy
                     ->orWhere(function ($q) use ($hoy) {
                         $q->whereNotNull('no_answer_at')
                             ->whereDate('no_answer_at', '<', $hoy)
-                            ->whereNotNull('contact_at'); // tuvo al menos un intento
+                            ->whereNotNull('contact_at')
+                            ->whereColumn('no_answer_at', '>', 'contact_at');
                     });
             })
             ->orderByRaw('CASE WHEN contact_at IS NULL THEN 0 ELSE 1 END ASC')
