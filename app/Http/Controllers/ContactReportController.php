@@ -68,10 +68,13 @@ class ContactReportController extends Controller
         //     ? round(($queueDoneForCard / $queueTotalForCard) * 100)
         //     : 0;
 
-        $queueTotalForCard  = Listing::where('available', 1)->count();
-        $queueDoneForCard   = ContactQueue::where('status', 'done')
-            ->whereDate('completed_at', Carbon::today())
+        $queueTotalForCard = Listing::where('available', 1)->count(); // 282
+
+        // Completadas: propiedades disponibles que YA tienen contact_at (fueron contactadas)
+        $queueDoneForCard = Listing::where('available', 1)
+            ->whereNotNull('contact_at')
             ->count();
+
         $queueCompletionPct = $queueTotalForCard > 0
             ? round(($queueDoneForCard / $queueTotalForCard) * 100)
             : 0;
