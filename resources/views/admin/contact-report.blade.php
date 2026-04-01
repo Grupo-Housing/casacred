@@ -133,18 +133,54 @@
                 </p>
             </div>
 
-            <div class="stat-card bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+            {{-- <div class="stat-card bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Cola Completada</span>
                     <span class="text-lg">✅</span>
                 </div>
                 <p class="text-3xl font-bold text-green-600">{{ $queueCompletionPct }}%</p>
                 <p class="text-xs text-gray-400 mt-1">{{ $queueDoneForCard }} de {{ $queueTotalForCard }} completadas</p>
-                {{-- mini barra de progreso --}}
+                
                 <div class="mt-2 bg-gray-100 rounded-full h-1.5">
                     <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ $queueCompletionPct }}%"></div>
                 </div>
+            </div> --}}
+
+            <div class="stat-card bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Estado de Contacto</span>
+                    <span class="text-lg">📞</span>
+                </div>
+
+                {{-- Contestaron --}}
+                <div class="mb-3">
+                    <div class="flex items-end justify-between">
+                        <p class="text-3xl font-bold text-green-600">{{ $queueCompletionPct }}%</p>
+                        <span class="text-xs text-gray-400 mb-1">contestaron</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-0.5">
+                        {{ $queueDoneForCard }} de {{ $queueTotalForCard }} propiedades
+                    </p>
+                    <div class="mt-2 bg-gray-100 rounded-full h-1.5">
+                        <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ $queueCompletionPct }}%"></div>
+                    </div>
+                </div>
+
+                {{-- No contestaron --}}
+                <div class="border-t pt-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-orange-400 inline-block"></span>
+                            <span class="text-xs text-gray-500">No contestaron</span>
+                        </div>
+                        <span class="text-sm font-bold text-orange-500">{{ $queueNoAnswerForCard }}</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-0.5 pl-3.5">
+                        {{ $queueTotalForCard > 0 ? round(($queueNoAnswerForCard / $queueTotalForCard) * 100) : 0 }}% del total
+                    </p>
+                </div>
             </div>
+
         </div>
 
         {{-- ── COLA DE CONTACTO ────────────────────────────────────────── --}}

@@ -68,11 +68,21 @@ class ContactReportController extends Controller
         //     ? round(($queueDoneForCard / $queueTotalForCard) * 100)
         //     : 0;
 
-        $queueTotalForCard = Listing::where('available', 1)->count(); // 282
+        $queueTotalForCard = Listing::where('available', 1)->count();
 
-        // Completadas: propiedades disponibles que YA tienen contact_at (fueron contactadas)
+        // Contestaron: contact_at actualizado en los últimos 30 días
         $queueDoneForCard = Listing::where('available', 1)
             ->whereNotNull('contact_at')
+            ->where('contact_at', '>=', Carbon::now()->subDays(30))
+            ->count();
+
+        // No contestaron: no_answer_at es más reciente que contact_at (o nunca contestó)
+        $queueNoAnswerForCard = Listing::where('available', 1)
+            ->whereNotNull('no_answer_at')
+            ->where(function ($q) {
+                $q->whereNull('contact_at')
+                    ->orWhereColumn('no_answer_at', '>', 'contact_at');
+            })
             ->count();
 
         $queueCompletionPct = $queueTotalForCard > 0
@@ -255,7 +265,8 @@ class ContactReportController extends Controller
             'queueDoneToday',
             'queuePendingByUser',
             'neverContacted',
-            'overdueContact'
+            'overdueContact',
+            'queueNoAnswerForCard'
         ));
     }
 
