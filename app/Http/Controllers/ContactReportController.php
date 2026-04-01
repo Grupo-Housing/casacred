@@ -62,8 +62,16 @@ class ContactReportController extends Controller
             ->count('listing_id');
 
         // ── Porcentaje de completado de la cola (para tarjeta 4) ────────
-        $queueTotalForCard  = ContactQueue::count();
-        $queueDoneForCard   = ContactQueue::where('status', 'done')->count();
+        // $queueTotalForCard  = ContactQueue::count();
+        // $queueDoneForCard   = ContactQueue::where('status', 'done')->count();
+        // $queueCompletionPct = $queueTotalForCard > 0
+        //     ? round(($queueDoneForCard / $queueTotalForCard) * 100)
+        //     : 0;
+
+        $queueTotalForCard  = Listing::where('available', 1)->count();
+        $queueDoneForCard   = ContactQueue::where('status', 'done')
+            ->whereDate('completed_at', Carbon::today())
+            ->count();
         $queueCompletionPct = $queueTotalForCard > 0
             ? round(($queueDoneForCard / $queueTotalForCard) * 100)
             : 0;
