@@ -1861,7 +1861,7 @@
                 let activeClass = index === 0 ? 'active' : '';
                 carouselItems += `
                 <div class="carousel-item ${activeClass}">
-                    <img src="${image}" ...>
+                    <img src="${image}" class="d-block w-100 carousel-image" style="height:330px" loading="lazy" alt="${property.listing_title} - img ${index+1}">
                 </div>`;
             });
 
@@ -2024,7 +2024,7 @@
                 let activeClass = index === 0 ? 'active' : '';
                 carouselItems += `
                 <div class="carousel-item ${activeClass}">
-                    <img src="${image}" ...>
+                    <img src="${image}" class="d-block w-100 carousel-image" style="height:330px" loading="lazy">
                 </div>`;
             });
 
