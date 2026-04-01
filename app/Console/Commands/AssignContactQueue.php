@@ -24,30 +24,60 @@ class AssignContactQueue extends Command
         $this->info("🗑️  {$deleted} asignaciones pendientes anteriores eliminadas.");
 
         // 2. Obtener propiedades que califican según las reglas de negocio
+        // $listings = Listing::where('available', 1)
+        //     ->where(function ($query) use ($hace30) {
+        //         // REGLA contact_at:
+        //         // Califica si nunca fue contactada O si el último contacto fue hace más de 30 días
+        //         $query->whereNull('contact_at')
+        //             ->orWhere('contact_at', '<', $hace30);
+        //     })
+        //     ->where(function ($query) use ($hoy) {
+        //         // REGLA no_answer_at:
+        //         // Califica si nunca tuvo no_answer O si el último no_answer fue ANTES de hoy
+        //         // (si no contestó ayer, hoy se puede volver a intentar)
+        //         // (si no contestó HOY, no insistir hasta mañana)
+        //         $query->whereNull('no_answer_at')
+        //             ->orWhereDate('no_answer_at', '<', $hoy);
+        //     })
+        //     // Orden de prioridad:
+        //     // 1. Nunca contactadas (contact_at NULL) primero
+        //     // 2. Las contactadas hace más tiempo
+        //     // 3. Las que no contestaron hace más tiempo
+        //     ->orderByRaw('CASE WHEN contact_at IS NULL THEN 0 ELSE 1 END ASC')
+        //     ->orderBy('contact_at', 'asc')
+        //     ->orderByRaw('CASE WHEN no_answer_at IS NULL THEN 0 ELSE 1 END ASC')
+        //     ->orderBy('no_answer_at', 'asc')
+        //     ->get();
+
         $listings = Listing::where('available', 1)
-            ->where(function ($query) use ($hace30) {
-                // REGLA contact_at:
-                // Califica si nunca fue contactada O si el último contacto fue hace más de 30 días
+            ->where(function ($query) use ($hace30, $hoy) {
+
+                // CASO 1: Nunca contactada
                 $query->whereNull('contact_at')
-                    ->orWhere('contact_at', '<', $hace30);
+
+                    // CASO 2: Contactada hace +30 días (con o sin no_answer)
+                    ->orWhere(function ($q) use ($hace30, $hoy) {
+                        $q->where('contact_at', '<', $hace30)
+                            ->where(function ($q2) use ($hoy) {
+                                $q2->whereNull('no_answer_at')
+                                    ->orWhereDate('no_answer_at', '<', $hoy);
+                            });
+                    })
+
+                    // CASO 3 (NUEVO): No contestó pero hay que reintentar hoy
+                    // contact_at puede ser reciente, pero no_answer_at es de antes de hoy
+                    ->orWhere(function ($q) use ($hoy) {
+                        $q->whereNotNull('no_answer_at')
+                            ->whereDate('no_answer_at', '<', $hoy)
+                            ->whereNotNull('contact_at'); // tuvo al menos un intento
+                    });
             })
-            ->where(function ($query) use ($hoy) {
-                // REGLA no_answer_at:
-                // Califica si nunca tuvo no_answer O si el último no_answer fue ANTES de hoy
-                // (si no contestó ayer, hoy se puede volver a intentar)
-                // (si no contestó HOY, no insistir hasta mañana)
-                $query->whereNull('no_answer_at')
-                    ->orWhereDate('no_answer_at', '<', $hoy);
-            })
-            // Orden de prioridad:
-            // 1. Nunca contactadas (contact_at NULL) primero
-            // 2. Las contactadas hace más tiempo
-            // 3. Las que no contestaron hace más tiempo
             ->orderByRaw('CASE WHEN contact_at IS NULL THEN 0 ELSE 1 END ASC')
-            ->orderBy('contact_at', 'asc')
             ->orderByRaw('CASE WHEN no_answer_at IS NULL THEN 0 ELSE 1 END ASC')
             ->orderBy('no_answer_at', 'asc')
+            ->orderBy('contact_at', 'asc')
             ->get();
+
 
         if ($listings->isEmpty()) {
             $this->info('✅ No hay propiedades disponibles para asignar.');
