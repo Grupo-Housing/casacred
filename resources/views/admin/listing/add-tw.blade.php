@@ -139,7 +139,7 @@
                 @endif
             </div>
             <div class="flex">
-                @if(Auth::user()->id == 934 || Auth::user()->id == 147 || Auth::user()->id == 942 || Auth::user()->id == 949 || Auth::user()->id == 936 || Auth::user()->id == 925 || Auth::user()->id == 922 || Auth::user()->id == 175)
+                @if(Auth::user()->id == 934 || Auth::user()->id == 147 || Auth::user()->id == 942 || Auth::user()->id == 949 || Auth::user()->id == 936 || Auth::user()->id == 925 || Auth::user()->id == 922 || Auth::user()->id == 175 || Auth::user()->id == 917)
                     <div>
                         <button onclick="abrirModal()" class="text-white text-center bg-red-600 rounded px-2 mr-2">
                             <span class="text-sm text-white font-semibold">Actualizar fecha de contacto</span>
