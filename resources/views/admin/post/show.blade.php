@@ -24,8 +24,8 @@
             --surface:     #ffffff;
             --bg:          #f5f6fa;
             --radius:      14px;
-            --font-display: 'Playfair Display', Georgia, serif;
-            --font-body:    'DM Sans', system-ui, sans-serif;
+            --font-display: 'Poppins', Georgia, serif;
+            --font-body:    'Poppins', system-ui, sans-serif;
         }
 
         body {
@@ -145,7 +145,6 @@
         .gh-prose {
             font-size: 15.5px;
             color: #2c3345;
-            text-align: justify;
         }
         .gh-prose p { margin-bottom: 1.25rem; }
         .gh-prose h2, .gh-prose h3 {
