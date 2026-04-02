@@ -436,7 +436,7 @@
         const videoElement  = document.getElementById('heroVideo');
         const sourceElement = videoElement.querySelector('source');
 
-        const desktopVideo = "{{ asset('img/inmobiliaria-en-cuenca-grupo-housing-video-banner.mp4') }}";
+        const desktopVideo = "{{ asset('img/Inmobiliaria-En-Cuenca-Grupo-Housing-Video-Banner-Desktop.mp4') }}";
         const mobileVideo  = "{{ asset('img/Inmobiliaria-En-Cuenca-Grupo-Housing-Video-Banner-Movil.mp4') }}";
         const BREAKPOINT   = 768;
 
