@@ -869,8 +869,10 @@
                         <div class="carousel-inner">
                             @foreach (explode('|', $listing->images) as $image)
                               <div class="carousel-item @if ($loop->first) active @endif">
-                                <img loading="lazy" src="{{ $filexists ? url('uploads/listing/', $image) : url('uploads/listing/', $image) }}"
-                                     class="d-block w-100 modal-img">
+                                <img 
+                                    loading="lazy" 
+                                    src="{{ $listing->resolveImageUrl($image) }}" 
+                                    class="d-block w-100 modal-img">
                               </div>
                             @endforeach
                         </div>
