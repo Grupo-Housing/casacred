@@ -945,7 +945,7 @@
                 </div>
 
                 <!-- Íconos de características -->
-                <div class="d-flex justify-content-between flex-wrap mt-4 feature-icons">
+                <div class="d-flex flex-wrap mt-4 feature-icons">
                     @if ($isProject)
                         @isset($units)
                         <div class="parent">
