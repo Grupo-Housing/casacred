@@ -787,7 +787,7 @@
         ->where('id', $listing->listingtype)
         ->first();
     $isTerrain = $listingtype && str_contains(strtolower($listingtype->type_title), 'terreno');
-    $isProject = $listing->listingtype == 40;
+    $isProject = $listing->listingtype == 41;
 @endphp
 {{-- @php
     $images = array_filter(explode('|', $listing->images));
