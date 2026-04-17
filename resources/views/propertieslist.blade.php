@@ -2011,13 +2011,13 @@
                                 ${isTerrain && frontArea ? `<div class="d-flex align-items-center justify-content-center w-100 characteristics">
                                                 <div>
                                                     <img width="50px" height="50px" src="{{ asset('img/area.png') }}" alt="">
-                                                    <h4 class="p-0 m-0" style="font-weight: 600; font-size: 15px">${frontArea}</h4>
+                                                    <h4 class="p-0 m-0" style="font-weight: 600; font-size: 15px">Frente: ${frontArea}</h4>
                                                 </div>
                                             </div>` : ''}
                                 ${isTerrain && fundArea ? `<div class="d-flex align-items-center justify-content-center w-100 characteristics">
                                                 <div>
                                                     <img width="50px" height="50px" src="{{ asset('img/area.png') }}" alt="">
-                                                    <h4 class="p-0 m-0" style="font-weight: 600; font-size: 15px">${fundArea}</h4>
+                                                    <h4 class="p-0 m-0" style="font-weight: 600; font-size: 15px">Fondo: ${fundArea}</h4>
                                                 </div>
                                             </div>` : ''}
                             </div>
@@ -2177,11 +2177,11 @@
                             </div>` : ''}
                             ${isTerrain && frontArea ? `<div class="characteristics text-center pl-2">
                                 <img width="30px" height="30px" src="{{ asset('img/area.png') }}" alt="">
-                                <p style="font-weight: 600; font-size: 15px">${frontArea}</p>
+                                <p style="font-weight: 600; font-size: 15px">Frente: ${frontArea}</p>
                             </div>` : ''}
                             ${isTerrain && fundArea ? `<div class="characteristics text-center pl-2">
                                 <img width="30px" height="30px" src="{{ asset('img/area.png') }}" alt="">
-                                <p style="font-weight: 600; font-size: 15px">${fundArea}</p>
+                                <p style="font-weight: 600; font-size: 15px">Fondo: ${fundArea}</p>
                             </div>` : ''}
                         </div>
                         <p class="card-text" style="font-weight: 500; font-size: 23px; font-family: 'Sharp Grotesk', sans-serif;">${property_price}</p>
