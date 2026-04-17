@@ -1864,7 +1864,7 @@
 
         function buildHorizontalPropertyHTML(property, indexProperty) {
             const isTerrain = property.type_name && property.type_name.toLowerCase().includes('terreno');
-            const isProject = property.listingtype == 40;
+            const isProject = property.listingtype == 41;
 
             let aliquotInfo = property.aliquot > 0 ?
                 `<p class="card-text" style="font-family: 'Sharp Grotesk', sans-serif;"><strong>Alícuota:</strong> $${property.aliquot}</p>` :
