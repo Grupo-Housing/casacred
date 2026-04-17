@@ -6,24 +6,17 @@
             ->select('type_title')
             ->where('id', $listing->listingtype)
             ->first();
-        $status;
-        switch ($listing->listingtypestatus) {
-            case 'en-venta':
-                $status = 'venta';
-                break;
-            case 'En venta':
-                $status = 'venta';
-                break;
-            case 'on sale':
-                $status = 'venta';
-                break;
-            case 'alquilar':
-                $status = 'alquiler';
-                break;
-            case 'proyectos':
-                $status = 'proyectos';
-                break;
-        }
+
+        $statusMap = [
+            'en-venta'  => 'venta',
+            'en venta'  => 'venta',
+            'on sale'   => 'venta',
+            'alquilar'  => 'alquiler',
+            'proyectos' => 'proyectos',
+        ];
+
+        $status = $statusMap[strtolower($listing->listingtypestatus)] ?? '';
+        
     @endphp
     <meta name="description" content="@isset($listing->meta_description){{ Str::ucfirst(Str::lower($listing->meta_description)) }} @else {{ mb_substr(trim(strip_tags($listing->listing_description)), 0, 150) }} @endif"/>
 
