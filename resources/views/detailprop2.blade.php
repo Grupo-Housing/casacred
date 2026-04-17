@@ -786,6 +786,8 @@
     $listingtype = DB::table('listing_types')
         ->where('id', $listing->listingtype)
         ->first();
+    $isTerrain = $listingtype && str_contains(strtolower($listingtype->type_title), 'terreno');
+    $isProject = $listing->listingtype == 40;
 @endphp
 {{-- @php
     $images = array_filter(explode('|', $listing->images));
@@ -944,29 +946,40 @@
 
                 <!-- Íconos de características -->
                 <div class="d-flex justify-content-between flex-wrap mt-4 feature-icons">
-                    @if ($listing->bedroom > 0)
+                    @if ($isProject)
+                        @isset($units)
                         <div class="parent">
                             <div class="feature-box">
-                                <img loading="lazy" src="{{ asset('img/dormitorios.png') }}" alt="Habitaciones">
+                                <img loading="lazy" src="{{ asset('img/dormitorios.png') }}" alt="Unidades">
                             </div>
-                            <p class="mt-2">{{ $listing->bedroom }} Habitaciones</p>
+                            <p class="mt-2">{{ count($units) }} {{ count($units) == 1 ? 'Unidad' : 'Unidades' }}</p>
                         </div>
-                    @endif
-                    @if ($listing->bathroom > 0)
-                        <div class="parent">
-                            <div class="feature-box">
-                                <img loading="lazy" src="{{ asset('img/banio.png') }}" alt="Baños">
+                        @endisset
+                    @elseif (!$isTerrain)
+                        @if ($listing->bedroom > 0)
+                            <div class="parent">
+                                <div class="feature-box">
+                                    <img loading="lazy" src="{{ asset('img/dormitorios.png') }}" alt="Habitaciones">
+                                </div>
+                                <p class="mt-2">{{ $listing->bedroom }} Habitaciones</p>
                             </div>
-                            <p class="mt-2">{{ $listing->bathroom }} {{ $listing->bathroom > 1 ? 'Baños' : 'Baño' }}</p>
-                        </div>
-                    @endif
-                    @if ($listing->garage > 0)
-                        <div class="parent">
-                            <div class="feature-box">
-                                <img loading="lazy" src="{{ asset('img/estacionamiento.png') }}" alt="Garajes">
+                        @endif
+                        @if ($listing->bathroom > 0)
+                            <div class="parent">
+                                <div class="feature-box">
+                                    <img loading="lazy" src="{{ asset('img/banio.png') }}" alt="Baños">
+                                </div>
+                                <p class="mt-2">{{ $listing->bathroom }} {{ $listing->bathroom > 1 ? 'Baños' : 'Baño' }}</p>
                             </div>
-                            <p class="mt-2">{{ $listing->garage }} {{ $listing->garage > 1 ? 'Garajes' : 'Garaje' }}</p>
-                        </div>
+                        @endif
+                        @if ($listing->garage > 0)
+                            <div class="parent">
+                                <div class="feature-box">
+                                    <img loading="lazy" src="{{ asset('img/estacionamiento.png') }}" alt="Garajes">
+                                </div>
+                                <p class="mt-2">{{ $listing->garage }} {{ $listing->garage > 1 ? 'Garajes' : 'Garaje' }}</p>
+                            </div>
+                        @endif
                     @endif
                     @if(isset($listing->land_area) && $listing->land_area != 0)
                         <div class="parent">
@@ -982,6 +995,22 @@
                                 <img loading="lazy" src="{{ asset('img/area.png') }}" alt="Casa">
                             </div>
                             <p class="mt-2">{{ $listing->construction_area }} m² Construcción</p>
+                        </div>
+                    @endif
+                    @if ($isTerrain && isset($listing->Front) && $listing->Front > 0)
+                        <div class="parent">
+                            <div class="feature-box">
+                                <img loading="lazy" src="{{ asset('img/area.png') }}" alt="Frente">
+                            </div>
+                            <p class="mt-2">Frente: {{ $listing->Front }} m²</p>
+                        </div>
+                    @endif
+                    @if ($isTerrain && isset($listing->Fund) && $listing->Fund > 0)
+                        <div class="parent">
+                            <div class="feature-box">
+                                <img loading="lazy" src="{{ asset('img/area.png') }}" alt="Fondo">
+                            </div>
+                            <p class="mt-2">Fondo: {{ $listing->Fund }} m²</p>
                         </div>
                     @endif
                 </div>
