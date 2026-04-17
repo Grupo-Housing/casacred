@@ -1853,7 +1853,19 @@
         }
 
 
+        function buildTypeBadge(typeName, listingtype) {
+            if (!typeName) return '';
+            const lowerName = typeName.toLowerCase();
+            let color = '#242B40';
+            if (lowerName.includes('terreno')) color = '#28a745';
+            else if (listingtype == 40) color = '#fd7e14';
+            return `<span style="background:${color};color:#fff;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500;vertical-align:middle;">${typeName}</span>`;
+        }
+
         function buildHorizontalPropertyHTML(property, indexProperty) {
+            const isTerrain = property.type_name && property.type_name.toLowerCase().includes('terreno');
+            const isProject = property.listingtype == 40;
+
             let aliquotInfo = property.aliquot > 0 ?
                 `<p class="card-text" style="font-family: 'Sharp Grotesk', sans-serif;"><strong>Alícuota:</strong> $${property.aliquot}</p>` :
                 '';
@@ -1913,6 +1925,7 @@
 
             // Badge de zona cardinal
             const zoneBadge = buildZoneBadge(property.cardinal_zone);
+            const typeBadge = buildTypeBadge(property.type_name, property.listingtype);
 
             return `<article class="col-12 my-1 property-item" style="padding-left: 0px !important; padding-right: 0px !important;">
         <div class="card mb-3 rounded-0">
@@ -1939,9 +1952,17 @@
                         <p class="m-0 py-3 px-3 h5">Cod: ${property.product_code}</p>
                     </div>
                     <div class="card-body">
-                        <h2 class="h5 text-muted order-2" style="font-family: 'Sharp Grotesk', sans-serif; font-weight: 300;">
-                            <i class="fas fa-map-marker-alt"></i>${property.sector ? ` ${property.sector},` : ''} ${property.city}, ${property.state}${zoneBadge}
-                        </h2>
+                        <div class="d-flex">
+                            <h2 class="h5 text-muted order-2" style="font-family: 'Sharp Grotesk', sans-serif; font-weight: 300;">
+                                <i class="fas fa-map-marker-alt"></i>${property.sector ? ` ${property.sector},` : ''} ${property.city}, ${property.state}
+                            </h2>
+                            <p class="order-3">
+                                ${zoneBadge}
+                            </p>
+                            <p class="order-4 ml-1">
+                                ${typeBadge}
+                            </p>
+                        </div>
                         <a href="/propiedad/${property.slug}" class="text-dark order-1" style="text-decoration: none;">
                             <h3 class="card-title" style="font-family: 'Sharp Grotesk', sans-serif; font-size: 1.4rem; padding-right: 60px; font-weight: 500;">${property.listing_title.charAt(0).toUpperCase() + property.listing_title.slice(1).toLowerCase()}</h3>
                         </a>
@@ -1951,19 +1972,25 @@
                         <hr>
                         <div class="row align-items-center">
                             <div class="col-sm-8 d-flex justify-content-around">
-                                ${property.bedroom > 0 ? `<div class="d-flex align-items-center justify-content-center w-100 border-end characteristics">
+                                ${isProject ? `<div class="d-flex align-items-center justify-content-center w-100 border-end characteristics">
+                                                <div>
+                                                    <img width="50px" height="50px" src="{{ asset('img/dormitorios.png') }}" alt="Unidades del proyecto ${property.product_code}" title="Unidades del proyecto ${property.product_code}">
+                                                    <h4 class="p-0 m-0" style="font-weight: 600; font-size: 15px">${property.units_count} unid.</h4>
+                                                </div>
+                                            </div>` :
+                                  (!isTerrain && property.bedroom > 0 ? `<div class="d-flex align-items-center justify-content-center w-100 border-end characteristics">
                                                 <div>
                                                     <img width="50px" height="50px" src="{{ asset('img/dormitorios.png') }}" alt="Icono dormitorios de propiedad ${property.product_code}" title="Icono dormitorios de propiedad ${property.product_code}">
                                                     <h4 class="p-0 m-0" style="font-weight: 600; font-size: 15px">${property.bedroom} hab.</h4>
                                                 </div>
-                                            </div>` : ''}
-                                ${property.bathroom > 0 ? `<div class="d-flex align-items-center justify-content-center w-100 border-end characteristics">
+                                            </div>` : '')}
+                                ${!isTerrain && property.bathroom > 0 ? `<div class="d-flex align-items-center justify-content-center w-100 border-end characteristics">
                                                 <div>
                                                     <img width="50px" height="50px" src="{{ asset('img/banio.png') }}" alt="Icono de baños de propiedad ${property.product_code}" title="Icono de baños de la propiedad ${property.product_code}">
                                                     <h4 class="p-0 m-0" style="font-weight: 600; font-size: 15px">${property.bathroom} bañ.</h4>
                                                 </div>
                                             </div>` : ''}
-                                ${property.garage > 0 ? `<div class="d-flex align-items-center justify-content-center w-100 border-end characteristics">
+                                ${!isTerrain && property.garage > 0 ? `<div class="d-flex align-items-center justify-content-center w-100 border-end characteristics">
                                                 <div>
                                                     <img width="50px" height="50px" src="{{ asset('img/estacionamiento.png') }}" alt="Icono de estacionamientos de la propiedad ${property.product_code}" title="Icono de estacionamientos de la propiedad ${property.product_code}">
                                                     <h4 class="p-0 m-0" style="font-weight: 600; font-size: 15px">${property.garage} estac.</h4>
@@ -1981,13 +2008,13 @@
                                                     <h4 class="p-0 m-0" style="font-weight: 600; font-size: 15px">${landArea}</h4>
                                                 </div>
                                             </div>` : ''}
-                                ${frontArea ? `<div class="d-flex align-items-center justify-content-center w-100 characteristics">
+                                ${isTerrain && frontArea ? `<div class="d-flex align-items-center justify-content-center w-100 characteristics">
                                                 <div>
                                                     <img width="50px" height="50px" src="{{ asset('img/area.png') }}" alt="">
                                                     <h4 class="p-0 m-0" style="font-weight: 600; font-size: 15px">${frontArea}</h4>
                                                 </div>
                                             </div>` : ''}
-                                ${fundArea ? `<div class="d-flex align-items-center justify-content-center w-100 characteristics">
+                                ${isTerrain && fundArea ? `<div class="d-flex align-items-center justify-content-center w-100 characteristics">
                                                 <div>
                                                     <img width="50px" height="50px" src="{{ asset('img/area.png') }}" alt="">
                                                     <h4 class="p-0 m-0" style="font-weight: 600; font-size: 15px">${fundArea}</h4>
@@ -2016,6 +2043,9 @@
 
 
         function buildCardPropertyHTML(property, indexProperty) {
+            const isTerrain = property.type_name && property.type_name.toLowerCase().includes('terreno');
+            const isProject = property.listingtype == 40;
+
             let aliquotInfo = property.aliquot > 0 ?
                 `<p class="card-text" style="font-family: 'Sharp Grotesk', sans-serif;"><strong>Alícuota:</strong> $${property.aliquot}</p>` :
                 '';
@@ -2053,6 +2083,15 @@
                 landArea = `${property.land_area} m<sup>2</sup>`;
             }
 
+            let frontArea = '';
+            if (property.Front > 0) {
+                frontArea = `${property.Front} m<sup>2</sup>`;
+            }
+            let fundArea = '';
+            if (property.Fund > 0) {
+                fundArea = `${property.Fund} m<sup>2</sup>`;
+            }
+
             let formattedDescription = property.listing_description ?
                 property.listing_description.toLowerCase().replace(/(^\w{1})|(\.\s*\w{1})/g, letter => letter.toUpperCase())
                 .substring(0, 120) + '...' :
@@ -2074,7 +2113,8 @@
 
             // Badge de zona cardinal
             const zoneBadge = buildZoneBadge(property.cardinal_zone);
-            
+            const typeBadge = buildTypeBadge(property.type_name, property.listingtype);
+
             return `
     <article class="col-12 col-md-4 mb-4 property-item">
         <div class="card h-100">
@@ -2105,22 +2145,26 @@
                         ${property.listing_title.charAt(0).toUpperCase() + property.listing_title.slice(1).toLowerCase()}
                     </h3>
                 </a>
-                
+                ${typeBadge ? `<div class="mb-2">${typeBadge}</div>` : ''}
                 ${aliquotInfo}
                 <h4 class="card-text h6" style="font-family: 'Sharp Grotesk', sans-serif; font-weight: 100; font-size: 15px; text-align: justify">${formattedDescription}</h4>
                 <div class="mt-auto">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex flex-wrap">
-                            ${property.bedroom > 0 ? `<div class="characteristics text-center pl-2">
+                            ${isProject ? `<div class="characteristics text-center pl-2">
+                                <img width="30px" height="30px" src="{{ asset('img/dormitorios.png') }}" alt="Unidades del proyecto ${property.product_code}" title="Unidades del proyecto ${property.product_code}">
+                                <p style="font-weight: 600; font-size: 15px">${property.units_count} unid.</p>
+                            </div>` :
+                              (!isTerrain && property.bedroom > 0 ? `<div class="characteristics text-center pl-2">
                                 <img width="30px" height="30px" src="{{ asset('img/dormitorios.png') }}" alt="Icono de dormitorios de la propiedad ${property.product_code}" title="Icono de dormitorios de la propiedad ${property.product_code}">
                                 <p style="font-weight: 600; font-size: 15px">${property.bedroom}</p>
-                            </div>` : ''}
-                            ${property.bathroom > 0 ? `<div class="characteristics text-center pl-2">
+                            </div>` : '')}
+                            ${!isTerrain && property.bathroom > 0 ? `<div class="characteristics text-center pl-2">
                                 <img width="30px" height="30px" src="{{ asset('img/banio.png') }}" alt="Icono de baños de la propiedad ${property.product_code}" title="Icono de baños de la propiedad ${property.product_code}">
                                 <p style="font-weight: 600; font-size: 15px">${property.bathroom}</p>
                             </div>` : ''}
-                            ${property.garage > 0 ? `<div class="characteristics text-center pl-2">
-                                <img width="30px" height="30px" src="{{ asset('img/estacionamiento.png') }}" alt="Icono de estacionamientos de la propiedad ${property.product_code}" title="Icono de dormitorios de la propiedad ${property.product_code}">
+                            ${!isTerrain && property.garage > 0 ? `<div class="characteristics text-center pl-2">
+                                <img width="30px" height="30px" src="{{ asset('img/estacionamiento.png') }}" alt="Icono de estacionamientos de la propiedad ${property.product_code}" title="Icono de estacionamientos de la propiedad ${property.product_code}">
                                 <p style="font-weight: 600; font-size: 15px">${property.garage}</p>
                             </div>` : ''}
                             ${areaInfo ? `<div class="characteristics text-center pl-2">
@@ -2130,6 +2174,14 @@
                             ${landArea ? `<div class="characteristics text-center pl-2">
                                 <img width="30px" height="30px" src="{{ asset('img/area.png') }}" alt="Icono de area de terreno de la propiedad ${property.product_code}" title="Icono de area de terreno de la propiedad ${property.product_code}">
                                 <p style="font-weight: 600; font-size: 15px">${landArea}</p>
+                            </div>` : ''}
+                            ${isTerrain && frontArea ? `<div class="characteristics text-center pl-2">
+                                <img width="30px" height="30px" src="{{ asset('img/area.png') }}" alt="">
+                                <p style="font-weight: 600; font-size: 15px">${frontArea}</p>
+                            </div>` : ''}
+                            ${isTerrain && fundArea ? `<div class="characteristics text-center pl-2">
+                                <img width="30px" height="30px" src="{{ asset('img/area.png') }}" alt="">
+                                <p style="font-weight: 600; font-size: 15px">${fundArea}</p>
                             </div>` : ''}
                         </div>
                         <p class="card-text" style="font-weight: 500; font-size: 23px; font-family: 'Sharp Grotesk', sans-serif;">${property_price}</p>

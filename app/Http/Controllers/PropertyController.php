@@ -185,7 +185,10 @@ class PropertyController extends Controller
                     'listings.status',
                     'listing_types.type_title as type_name',
                     'listings.aliquot',
-                    'listings.cardinal_zone'
+                    'listings.cardinal_zone',
+                    'listings.Front',
+                    'listings.Fund',
+                    DB::raw('(SELECT COUNT(*) FROM units WHERE units.listing_id = listings.id AND units.deleted_at IS NULL) as units_count')
                 )
                 ->where('listings.available', 1)
                 ->where('listings.status', 1)
@@ -242,7 +245,10 @@ class PropertyController extends Controller
                 'listings.status',
                 'listing_types.type_title as type_name',
                 'listings.aliquot',
-                'listings.cardinal_zone'
+                'listings.cardinal_zone',
+                'listings.Front',
+                'listings.Fund',
+                DB::raw('(SELECT COUNT(*) FROM units WHERE units.listing_id = listings.id AND units.deleted_at IS NULL) as units_count')
             )
             ->where('listings.available', 1)
             ->where('listings.status', 1)
