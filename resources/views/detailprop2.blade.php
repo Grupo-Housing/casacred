@@ -502,7 +502,12 @@
         padding: 4px 10px;
     }
     .container-price-and-code{
-        display: inline !important;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .container-price-and-code .price-container{
+        font-size: 15px;
+        padding: 8px 14px;
     }
 }
 
@@ -930,14 +935,21 @@
 
                 <!-- Precio -->
                 <div class="container-price-and-code">
-                    <div class="price-container">
-                        <span>
-                            @if($listing->customized_price != null)
-                                Precio: {{ $listing->customized_price }}
-                            @else
-                                Precio: ${{ number_format($listing->property_price, 0, ',', '.') }}
-                            @endif
-                        </span>
+                    <div class="d-flex flex-wrap align-items-center" style="gap: 8px;">
+                        <div class="price-container">
+                            <span>
+                                @if($listing->customized_price != null)
+                                    Precio: {{ $listing->customized_price }}
+                                @else
+                                    Precio: ${{ number_format($listing->property_price, 0, ',', '.') }}
+                                @endif
+                            </span>
+                        </div>
+                        @if($listing->is_dual_operation && $listing->rental_price)
+                            <div class="price-container" style="background-color: #1a6b3c;">
+                                <span>Precio de Renta: ${{ number_format($listing->rental_price, 0, ',', '.') }}</span>
+                            </div>
+                        @endif
                     </div>
                     <div class="code-listing">
                         <span>COD: {{ $listing->product_code }}</span>
